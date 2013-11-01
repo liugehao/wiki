@@ -1,0 +1,32 @@
+Describe python/数据库操作paramstyle here.
+----
+ * 用?还是%s取决于paramstyle参数的配置，dbapi2.0文档  http://www.python.org/dev/peps/pep-0249/    里的解释
+{{{
+                'qmark'         Question mark style,
+                                e.g. '...WHERE name=?'
+                'numeric'       Numeric, positional style,
+                                e.g. '...WHERE name=:1'
+                'named'         Named style,
+                                e.g. '...WHERE name=:name'
+                'format'        ANSI C printf format codes,
+                                e.g. '...WHERE name=%s'
+                'pyformat'      Python extended format codes,
+                                e.g. '...WHERE name=%(name)s'
+}}}
+    也就是说如果 mysqldb 默认不是'qmark' 而是'format'风格的话 可以这样写
+
+    execute('insert into queuelog (a,b,c,d,e) values (%s,%s,%s,%s,%s)' ,Datalist)
+
+    '''重点是不要自己拼接sql语句'''。
+
+ * 2、关于execute是单条插入的问题 dbapi2.0定义了 executemany，下面这个例子是mysqldb文档里的
+{{{
+c.executemany(
+      """INSERT INTO breakfast (name, spam, eggs, sausage, price)
+      VALUES (%s, %s, %s, %s, %s)""",
+      [
+      ("Spam and Sausage Lover's Plate", 5, 1, 8, 7.95 ),
+      ("Not So Much Spam Plate", 3, 2, 0, 3.95 ),
+      ("Don't Wany ANY SPAM! Plate", 0, 4, 3, 5.95 )
+      ] )
+}}}

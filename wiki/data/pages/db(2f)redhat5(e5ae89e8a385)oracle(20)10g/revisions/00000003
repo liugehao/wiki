@@ -1,0 +1,56 @@
+= redhat5安装oracle 10g =
+----
+
+ 1. 打开安装文件 database/install/oraparam.ini，操作如下：
+  {{{
+#修改
+Linux=redhat-3,SuSE-9,redhat-4,redhat-5,UnitedLinux-1.0,asianux-1,asianux-2]
+
+#增加：
+
+[Linux-redhat-5.0-optional]
+TEMP_SPACE=80
+SWAP_SPACE=150
+MIN_DISPLAY_COLORS=256
+}}}
+
+ 1. 增加用户
+  {{{
+groupadd -g 499 oinstall;
+groupadd -g 502 dba;
+useradd  -u 499 -p oracle -g oinstall -G dba oracle;}}}
+ 1. 更改及应用内核
+  {{{
+echo "# " >> /etc/sysctl.conf
+echo "# Required for Oracle 10g " >> /etc/sysctl.conf
+echo "# " >> /etc/sysctl.conf
+echo "kernel.shmall = 2097152" >> /etc/sysctl.conf
+echo "kernel.shmmax = 2147483648" >> /etc/sysctl.conf
+echo "kernel.shmmni = 4096" >> /etc/sysctl.conf 
+echo "kernel.sem = 250 32000 100 128" >> /etc/sysctl.conf
+echo "fs.file-max = 65536" >> /etc/sysctl.conf
+echo "net.ipv4.ip_local_port_range = 1024 65000" >> /etc/sysctl.conf
+/sbin/sysctl -p}}} 
+
+
+ 1. 更改环境变量
+  {{{
+echo "ORACLE_BASE=/oracle/home" >> /home/oracle/.bash_profile
+echo "ORACLE_HOME=/oracle/home/OraHome_1" >> /home/oracle/.bash_profile 
+echo "export ORACLE_HOME ORACLE_BASE" >> /home/oracle/.bash_profile 
+echo "PATH=$PATH:$ORACLE_HOME/bin" >> /home/oracle/.bash_profile 
+echo "export PATH"
+}}}
+
+ 1. 配置网络
+  {{{
+echo "128.165.101.107 test-server.my-domain.us test-server" >> /etc/hosts;
+/etc/init.d/network restart
+}}}
+
+ 1. 安装
+  {{{
+./runInstaller
+}}}
+
+参照oracle官网 http://www.oracle.com/technetwork/articles/saternos-kickstart-098543.html

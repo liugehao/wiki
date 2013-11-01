@@ -1,0 +1,63 @@
+Describe linux/rhel/redhat笔记 here.
+----
+echo "aaa" > tty1　＃输出内容到tty终端
+
+vi /etc/inittab
+id:3:initdefault  #3默认不启动xwindow,5开机启动xwindow
+
+1:2345:respawn:/sbin/ningetty tty1 #tty终端数量
+
+
+===9 10 课时，系统命令初步 ===
+linux一切皆文件，硬件也抽象成文件形式
+
+cd ~abc 进入abc家目录
+touch a 更改文件时间，如果没有文件则创建
+touch /tmp/{a,b} 创建a,b２个文件
+stat a 查看文件a的时间
+pws 显示当前路径
+ls -F 增加标记。可执行文件加/,可执行文件加*...
+alias ls='ls --color=tty'　增加颜色
+unalias 取消别名
+source .bashrc 升效
+cp -r 文件夹
+rm -i 交互模式，是否删除
+rm -r 删除文件夹
+rm -rf 删除文件夹和文件不询问
+rm -f 不问是否删除
+cp -r 文件夹
+rmdir 删除空文件夹
+pstree 查看进程树
+
+hostname 查看、更改主机名（不保存，下次重启变回原来主机名）
+/etc/ssconfig/network 主机名信息
+
+ifconfig 查看更改ＩＰ
+ifconfig eth0 192.168.1.12 (不永久第一次)
+vi /etc/sysconfig/network-scraipts/ifcfg-eth0 网络配置文件
+
+netconfig 改文件，自动改ifconfig的配置到配置文件，再service network restart 升效
+
+file /bin/ls ＃file 文件名，查看文件类型
+file p.img
+p.img: Linux rev 1.0 ext4 filesystem data, UUID=c6f89be8-9267-4953-b4f5-ff368c58d9c4 (extents) (huge files)
+
+
+mount /dev/cdrom /mnt
+mount -t iso9660 /dev/cdrom /mnt
+mount -t cifs //192.168.0.1/tools /mnt
+mount -t cifs -o username=administrator //192.168.0.1/tools /mnt #win share
+mount 192.168.0.254:/var/ftp/pub /mnt #nfs linux共享。nfs速度快
+
+cat /dev/cdrom >a.iso 做镜象文件
+mount -t iso9660 -o loop a.iso /mnt #loop 虚拟成一个回环设备
+
+
+ls -l 不是文件实际占的大小，文件夹４Ｋ，
+du -s 看文件夹大小，汇总　-h 显示k,m,g
+
+shutdown -h 16:00 ＃１６点关机
+init 0 关闭服务，然后调halt -p -f 断电。自己用机器，直接init 0关机
+
+shutdown -r now　会调用
+init 6 

@@ -1,0 +1,245 @@
+Describe linux/gwan g-wan keyvalue store zlib base64 here.
+
+requests post数据时，进行了escape, 所以在http服务器端要unescape才是原数据。
+
+file kv4.c
+{{{#!highlight c
+
+#include "gwan.h" // G-WAN exported functions
+#include <malloc.h>
+#include <string.h>
+#include <stdlib.h>
+#include <base64.c>
+
+typedef struct record_s // this is a user-defined 'record' structure
+{
+    char *content; 
+    u64 tm;
+} record_t;
+
+
+int main(int argc, char *argv[])
+{
+    xbuf_t *reply = get_reply(argv);
+    char *act="", *content="", *tm="";
+
+
+    get_arg("act=", &act, argc, argv);
+    get_arg("content=", &content, argc, argv);
+    get_arg("txm=", &tm, argc, argv);
+
+
+    
+
+
+
+    kv_t **vhost_ptr = (kv_t**)get_env(argv, US_VHOST_DATA), //persistent ptr
+    *forum_store = 0; //convenience pointer (var->m instead of (*var)->m)
+  
+    if (vhost_ptr && !*vhost_ptr)
+    {
+        *vhost_ptr = (kv_t*)malloc(sizeof(kv_t));
+        kv_init(*vhost_ptr, "users", 1024, 0, 0, 0);
+    } 
+    forum_store = *vhost_ptr;
+
+
+
+    u64 txm = atof(tm);
+    if ( *act == 'a' )
+    {
+        xbuf_xcat(reply, "\n\n%s %s %llu<br>\n\n", act, content, txm);
+        kv_item item;
+        record_t *record ;
+        //printf("before unescape:%d\n",strlen(content));
+        unescape_html(content);
+        //printf("unescaped:%d\n",strlen(content));
+        //char tmp[strlen(content)];
+        //printf("content:%s\n", content);
+        
+        //base64_decode(tmp, content, strlen(content));
+        
+        //printf("content(tmp):%s\n", tmp);
+        record = (record_t*)malloc(sizeof(record_t));
+        record->content = (char*)strdup(content); //content ,tmp
+        record->tm = txm;
+        //printf("bin len:%d\n", strlen(record->content));
+        item.key = (char *)&record->tm;
+        item.klen = sizeof(u64) ;//sizeof(str) - 1; // faster
+        item.val = (char*)record;
+        item.flags = 0;
+        kv_add(forum_store, &item); // add an entry to the name_dat Store index
+
+    }
+
+    if ( *act == 'g' )
+    {        
+
+        record_t *record = (record_t*)kv_get(forum_store, (char *)&txm, sizeof(u64));
+        xbuf_xcat(reply,
+                "%s",
+                record ? record->content : "not found");
+
+    }
+
+
+    //xbuf_xcat(reply, "<br><b>Count</b>: %d key(s) in KV store<br>",
+    //            forum_store->nbr_items); 
+
+
+   
+
+   return 200; // return an HTTP code (200:'OK')
+
+}
+
+}}}
+python file:
+{{{#!highlight python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import MySQLdb, zlib, requests, os, base64
+
+conn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='liuyou', db='base')
+cur1 =conn.cursor()
+#cur1.execute("select distinct tm from smi limit 1000000;")
+tmp = "".join(os.popen('mysql -h localhost -uroot -pliuyou base --execute="select * from smi limit 10000,10"', 'r').readlines()[1:])
+tmp = tmp.replace("\t0\t","\t\t").replace("\t0\t","\t\t").replace("\t0.0000\t","\t\t").replace("0000-00-00 00:00:00","")
+tmp = zlib.compress(tmp, 9)
+"""
+print "\n%s\n" % tmp
+tmp1 = zlib.compress(tmp, 9)
+print "\n%s\n" % tmp1
+tmp = base64.b64encode(tmp1)
+print "\n%s\n" % tmp
+print zlib.decompress(base64.b64decode(tmp))
+
+#tmp = zlib.compress(tmp, 9)
+#tmp = zlib.compress(str(os.popen('mysql -h localhost -uroot -pliuyou base --execute="select * from smi limit 10000,10"', 'r').readlines()[1:]))
+"""
+#while 1:
+    #row = cur1.fetchone()
+    #if row is None:
+    #    break
+    #print row[0]
+for i in xrange(1,100000):
+    print i,len(tmp)
+    requests.post("http://127.0.0.1:8080/?kv4.c&act=a&txm=%d" % i, data={
+        "content": tmp
+    },timeout=3 , verify=False)
+}}}
+
+base64.c
+{{{#!highlight c
+#include <string.h>
+
+char b64string[] =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+long base64_encode (to, from, len)
+	char *to, *from;
+	unsigned int len;
+{
+	char *fromp = from;
+	char *top = to;
+	unsigned char cbyte;
+	unsigned char obyte;
+	char end[3];
+
+	for (; len >= 3; len -= 3) {
+		cbyte = *fromp++;
+		*top++ = b64string[(int)(cbyte >> 2)];
+		obyte = (cbyte << 4) & 0x30;		/* 0011 0000 */
+
+		cbyte = *fromp++;
+		obyte |= (cbyte >> 4);			/* 0000 1111 */
+		*top++ = b64string[(int)obyte];
+		obyte = (cbyte << 2) & 0x3C;		/* 0011 1100 */
+
+		cbyte = *fromp++;
+		obyte |= (cbyte >> 6);			/* 0000 0011 */
+		*top++ = b64string[(int)obyte];
+		*top++ = b64string[(int)(cbyte & 0x3F)];/* 0011 1111 */
+	}
+
+	if (len) {
+		end[0] = *fromp++;
+		if (--len) end[1] = *fromp++; else end[1] = 0;
+		end[2] = 0;
+
+		cbyte = end[0];
+		*top++ = b64string[(int)(cbyte >> 2)];
+		obyte = (cbyte << 4) & 0x30;		/* 0011 0000 */
+
+		cbyte = end[1];
+		obyte |= (cbyte >> 4);
+		*top++ = b64string[(int)obyte];
+		obyte = (cbyte << 2) & 0x3C;		/* 0011 1100 */
+
+		if (len) *top++ = b64string[(int)obyte];
+		else *top++ = '=';
+		*top++ = '=';
+	}
+	*top = 0;
+	return top - to;
+}
+
+/* badchar(): check if c is decent; puts either the */
+/* location of c or null into p.                  */
+#define badchar(c,p) (!(p = memchr(b64string, c, 64)))
+
+long base64_decode (to, from, len)
+	char *to, *from;
+	unsigned int len;
+{
+	char *fromp = from;
+	char *top = to;
+	char *p;
+	unsigned char cbyte;
+	unsigned char obyte;
+	int padding = 0;
+
+	for (; len >= 4; len -= 4) {
+		if ((cbyte = *fromp++) == '=') cbyte = 0;
+		else {
+			if (badchar(cbyte, p)) return -1;
+			cbyte = (p - b64string);
+		}
+		obyte = cbyte << 2;		/* 1111 1100 */
+
+		if ((cbyte = *fromp++) == '=') cbyte = 0;
+		else {
+			if (badchar(cbyte, p)) return -1;
+			cbyte = p - b64string;
+		}
+		obyte |= cbyte >> 4;		/* 0000 0011 */
+		*top++ = obyte;
+
+		obyte = cbyte << 4;		/* 1111 0000 */
+		if ((cbyte = *fromp++) == '=') { cbyte = 0; padding++; }
+		else {
+			padding = 0;
+			if (badchar (cbyte, p)) return -1;
+			cbyte = p - b64string;
+		}
+		obyte |= cbyte >> 2;		/* 0000 1111 */
+		*top++ = obyte;
+
+		obyte = cbyte << 6;		/* 1100 0000 */
+		if ((cbyte = *fromp++) == '=') { cbyte = 0; padding++; }
+		else {
+			padding = 0;
+			if (badchar (cbyte, p)) return -1;
+			cbyte = p - b64string;
+		}
+		obyte |= cbyte;			/* 0011 1111 */
+		*top++ = obyte;
+	}
+
+	*top = 0;
+	if (len) return -1;
+	return (top - to) - padding;
+}
+
+}}}

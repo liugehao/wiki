@@ -1,0 +1,53 @@
+Ubuntu 11.10 Oneric
+{{{
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:ferramroberto/java
+sudo apt-get update
+sudo apt-get install sun-java6-jdk sun-java6-plugin
+}}}
+
+Ubuntu 12.04 Precise
+
+Clean up the historical open jdk:
+{{{
+sudo apt-get purge openjdk*
+}}}
+Add a new repo and install the sdk:
+{{{
+sudo add-apt-repository ppa:eugenesan/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer
+}}}
+If you want the JRE and the browser plugin:
+{{{
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer
+}}}
+
+Ubuntu 12.04 (Precise Pangolin) - another way
+
+Thanks to the comments, please note that you can try this method too: http://www.liberiangeek.net/2012/04/install-oracle-java-jdk-7-in-ubuntu-12-04-precise-pangolin/
+
+Make the sun java the default
+
+You may want to also add the following
+{{{
+sudo update-alternatives --config java
+}}}
+You should get the following
+
+Selection Path Priority Status
+
+0 /usr/lib/jvm/java-7-oracle/bin/java 1 auto mode 1 /usr/lib/jvm/java-7-oracle/bin/java 1 manual mode * 2 /usr/lib/jvm/java-7-oracle/jre/bin/java 1 manual mode
+
+Press enter to keep the current choice[*], or type selection number: 2
+
+Select (2) and press enter
+
+Now running:
+{{{
+java -version
+}}}
+returns:
+java version "1.7.0_04" Java(TM) SE Runtime Environment (build 1.7.0_04-b20) Java HotSpot(TM) Server VM (build 23.0-b21, mixed mode)

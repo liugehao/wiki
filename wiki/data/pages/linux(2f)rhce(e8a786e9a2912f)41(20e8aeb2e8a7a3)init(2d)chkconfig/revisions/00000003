@@ -1,0 +1,88 @@
+== 章节3 课时 41 讲解init-chkconfig ==
+ls /sbin/init //初始化程序 ,桌面，图标，输入法加载，...
+{{{
+/etc/inittab //init主配置文件
+  /etc/rc.d/rc.sysinit //首先访问
+  /etc/rc.d/rc X
+    /etc/rc.d/rcX.d/Sxxxx start(软链接/etc/rc.d/init.d/xxxx)
+    /etc/rc.d/rc.local (系统开机运行程序放置位置，profile是bash启动运行程序配置）
+  minigetty /dev/tty1-6
+     login -> bash
+         /etc/profile ~/.bash_profile
+         
+  init 5: gdm (图型界面)
+
+
+
+init 运行级别　，init $1 第一个参数如果不写，默认为９，
+id:5:initdefault:  //默认进入系统　设置６不停重启　0开机后立即关机
+
+si::sysinit:/etc/init.d/rcS（rc.sysinit ）　//默认执行
+ －》mount -a //用到/etc/fstab 如果此处出错，rc.sysinit出错，检测文件系统
+ －》mount -o rw,remount /dev/sda2 /  //加载文件系统，scsi驱动等
+ 
+ 
+echo -en "\\033[0;31m" aa //设成红色
+echo -en "\\033[0;3４m" Ｂlue Hat　//蓝色
+
+
+1:2345:respawn:/sbin/getty 38400 tty1
+2:23:respawn:/sbin/getty 38400 tty2
+3:23:respawn:/sbin/getty 38400 tty3
+4:23:respawn:/sbin/getty 38400 tty4
+5:23:respawn:/sbin/getty 38400 tty5
+6:23:respawn:/sbin/getty 38400 tty6
+
+12:23:respawn:/usr/bin/top 一直执行top,如果停止，会重新启动
+
+
+respawn 进程被杀掉后会重新启动
+x:5:respawn:/etc/X11/prefdm -nodaemon //运行级别５(init 5 )以respawn 方式运行prefdm ，显示图型界面
+
+init 3 (./rc 3)
+/etc/rc.d/rc3.d/S* 
+如果K开头的脚本开启了，init关闭K开闲脚本，启动Ｓ开关不脚本。
+ls /etc/rc.d/rc3.d/*sshd /etc/rc.d/rc5.d/*sshd
+/etc/rc.d/rc3.dK25sshd /etc/rc.d/rc5.d/S55sshd
+
+ls /etc/rc.d/rc3.d/*sshd /etc/rc.d/rc5.d/*sshd
+/etc/rc.d/rc3.dK25sshd -->../init.d/sshd
+/etc/rc.d/rc5.d/S55sshd -->../init.d/sshd
+软链接，Ｋ开头，默认关闭，Ｓ开头默认开启
+
+开启关闭 执行　/etc/rc.d/rc 3 
+时运行/etc/rc.d/rc3.d/K开头脚本 stop
+/etc/rc.d/rc3.d/S开头脚本 start
+
+pf::pwoerfail 有ups时停电延时关机，
+pr:12345:pwoerkwait　如果来电，停止关机
+
+更改/etc/inittab 使其生效　init q
+
+h}}}
+chkconfig 更改状态
+{{{
+/etc/init.d/mysql8
+服务启动脚本支持chkconfig 必须有如下２行，虽然是注释
+# chkconfig: - 55 45 
+# description: mysql database server.
+- 默认关闭　启动顺序５５，关闭顺序４５
+
+# chkconfig: 35 55 45
+35是指运行级别为３，５时开启
+
+
+chkconfig --add mysql8 //添加到启动列表　会添加软件链接/etc/rc.d/rc3.d/S55mysql8
+chkconfig mysql8 off //默认不启动　会添加软件链接/etc/rc.d/rc3.d/L55mysql8
+}}}
+
+
+
+
+
+
+
+
+
+
+ 

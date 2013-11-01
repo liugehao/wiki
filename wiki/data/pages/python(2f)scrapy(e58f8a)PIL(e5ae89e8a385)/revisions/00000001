@@ -1,0 +1,16 @@
+Describe python/scrapy及PIL安装 here.
+----
+{{{
+aptitude install python-setuptools python2.7-dev
+easy_install pip
+aptitude install libxslt-dev
+aptitude install libxml2-dev
+
+pip install scrapy
+
+pip instlal sqlalchemy
+
+pip install PIL
+
+}}}
+Ubuntu11.10上，libjpeg.so、libz.so和libfreetype.so都在路径/usr/lib/x86_64-linux-gnu下，在/usr/lib下为这3个包创建软链接后执行ldconfig

@@ -1,0 +1,14 @@
+= linux用apt-get安装软件总出错 =
+
+由于jdk安装时下载地址不对，所以出错。
+{{{
+apt-get -f install 
+dpkg --configure -a
+}}}
+都无效
+{{{
+cd /var/lib/dpkg/info
+rm oracle*
+apt-get autoremove
+}}}
+问题解决

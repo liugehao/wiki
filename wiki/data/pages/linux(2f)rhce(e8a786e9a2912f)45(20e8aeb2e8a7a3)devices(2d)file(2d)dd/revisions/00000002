@@ -1,0 +1,56 @@
+== 章节3 课时 45 讲解devices-file-dd ==
+{{{
+一切皆文件
+
+/proc/xxx 
+／
+
+ls -l 时第一字节
+b block型设备文件
+c 字符型设备文件
+s 网络类型文件
+p 管道类型文件
+d 目录
+- 普通文件
+
+
+root@x201i:/dev# ls -l /dev/sda /dev/tty1
+brw-rw---T 1 root disk 8, 0 Aug 27 08:48 /dev/sda 主设备号8，辅助设备号0 
+crw-rw---- 1 root tty  4, 1 Aug 27 08:48 /dev/tty1
+
+
+cat /dev/sda 时
+kernel 去找文件 /proc/devices ->找block类型主设备号8
+modules(driver) sd 对应sd_mod.ko模块
+控制权交给模块sd_mod,  辅助设备号0 ,找0标号设备
+然后输出
+
+monod /opt/myhd b 8 0 //创建了和/sda一样的设备文件
+cat /opt/myhd //输出和cat /dev/sda一样
+
+mknod /opt/mytty c 4 1 和/dev/tty1一样的设备文件
+＊ root创建文件权限644，如果创建了文件，其它用户可以访问，其它用户dd到一个镜像，在其它机器mount后，可以访问没有权限访问的文件。
+
+mknod /opt/ppp p 管道
+
+
+vi kernel|source/Documention/devices.txt内核源码 ，有设备号约写
+
+
+start_udev(udev) 搜索所有内核模块,在/dev目录下重建所有设备文件
+
+
+dd if=/dev/sda of=/dev/sdb bs=1024  count=xxx //bs块大小,count块数
+dd if=/dev/zero of=/dev/sda2 bs=1M //把分区中数据清0,数据无法恢复
+
+cat /dev/sda > /dev/null 丢弃数据，重定向到/dev/null
+tar cf /tmp/a.tar /etc/passwd > /dev/null 2>&1 正确错误输出都到/dev/null
+tar cf /tmp/a.tar /etc/passwd &>/dev/null 同上
+
+常见设备
+tty1 c 4 1
+tty2 c 4 3
+tty0 c 4 0 //当前控制台
+hda b 3 0 //硬盘设备号64个，最多可创建63个分区，再多无法区分
+hdb b 3 64 
+}}}

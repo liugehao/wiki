@@ -1,0 +1,169 @@
+= rhel5.7部署twitter storm =
+----
+== python install ==
+------------------------------------------------------
+{{{
+# wget http://python.org/ftp/python/2.7.4/Python-2.7.4.tgz
+# tar zxvf Python-2.7.2.tgz
+# cd Python-2.7.2
+# ./configure
+# make
+# make install
+# vi /etc/ld.so.conf
+         /usr/local/lib/
+# /sbin/ldconfig
+
+no acceptable C compiler found in $PATH
+# rpm -ivh gcc-4.1.2-51.el5.x86_64.rpm glibc-devel-2.5-65.x86_64.rpm glibc-headers-2.5-65.x86_64.rpm kernel-headers-2.6.18-274.el5.x86_64.rpm
+}}}
+
+== zookeeper install ==
+------------------------------------------------------
+{{{wget http://labs.mop.com/apache-mirror/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz
+
+# tar zxf zookeeper-3.3.3.tar.gz
+# cp -R zookeeper-3.3.3 /usr/local/
+# ln -s /usr/local/zookeeper-3.3.3/ /usr/local/zookeeper
+# vi ~./bashrc 
+
+          export ZOOKEEPER_HOME="/usr/local/zookeeper"
+
+          export PATH=$PATH:$ZOOKEEPER_HOME/bin
+
+# cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg 
+# sudo mkdir /tmp/zookeeper
+# sudo mkdir /var/log/zookeeper
+
+}}}
+
+== zeromq install ==
+------------------------------------------------------
+{{{#wget http://download.zeromq.org/zeromq-3.2.2.tar.gz
+# tar zxf zeromq-3.2.2.tar.gz
+# cd zeromq-3.2.2
+# ./configure
+# make
+# make install
+# /sbin/ldconfig 
+
+rpm -ivh gcc-c++-4.1.2-51.el5.x86_64.rpm libstdc++-devel-4.1.2-51.el5.x86_64.rpm 
+
+}}}
+
+== git ==
+------------------------------------------------------
+{{{
+rpm -ivh perl-DBI-1.52-2.el5.x86_64.rpm
+rpm -ivh git-1.7.8.2-2.el5.rf.x86_64.rpm perl-Git-1.7.8.2-2.el5.rf.x86_64.rpm
+}}}
+
+
+== jzmq install ==
+------------------------------------------------------
+{{{
+# git clone git://github.com/nathanmarz/jzmq.git
+# cd jzmq
+# ./autogen.sh
+########################
+autogen.sh: error: could not find libtool.  libtool is required to run autogen.sh.
+#yum install uuid-devel
+#rpm -ivh libtool-1.5.22-7.el5_4.x86_64.rpm autoconf-2.59-12.noarch.rpm  automake-1.9.6-2.3.el5.noarch.rpm imake-1.0.2-3.x86_64.rpm
+########################
+# ./configure
+checking for zmq_init in -lzmq... yes
+configure: error: the JAVA_HOME environment variable must be set to your JDK location.
+#################
+# jdk install
+解压jdk.tar.gz到任意目录
+
+/etc/profile文件   -- 全部用户有效
+
+在profile 文件的尾部面加入
+
+JAVA_HOME=/usr/java/jdk1.5.0_16  -- jdk 的安装路径
+PATH=$JAVA_HOME/bin:$PATH
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
+
+export JAVA_HOME
+export PATH
+export CLASSPATH
+export CATALINA_HOME    
+
+保存 退出
+在shell输入 source /etc/profile
+###################
+---
+
+# make
+# make install
+}}}
+
+
+== storm install ==
+------------------------------------------------------
+{{{
+#git clone git://github.com/nathanmarz/storm.git
+
+wget http://cloud.github.com/downloads/nathanmarz/storm/storm-0.8.1.zip
+cp -R storm /usr/local/
+vi ~/.bashrc
+          export STORM_HOME=/usr/local/storm-0.7.1
+
+          export PATH=$PATH:$STORM_HOME/bin
+
+}}}
+
+=== lein install ===
+------------------------------------------------------
+{{{
+   1. Make sure you have JDK 6 or later.
+   2. Download the script.
+   3. Place it on your $PATH. (~/bin is a good choice if it is on your path.)
+   4. Set it to be executable. (chmod 755 ~/bin/lein)
+
+wget https://raw.github.com/technomancy/leiningen/stable/bin/lein
+
+}}}
+
+
+
+== zoo.cfg ==
+------------------------------------------------------
+{{{
+# The number of milliseconds of each tick
+tickTime=2000
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=10
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=5
+# the directory where the snapshot is stored.
+dataDir=/state/partition1/tmp/zookeeper/data
+dataLogDir=/state/partition1/tmp/zookeeper/log
+# the port at which the clients will connect
+clientPort=2181
+server.0=cluster:2888:3888
+server.1=compute-0-0:2888:3888
+server.2=compute-0-1:2888:3888
+机器名不好用的话，改为ＩＰ
+# echo 0 > /state/partition1/tmp/zookeeper/data/myid
+这一步是每台电脑上都不同的。具体的对应关系参见zoo.cfg中的server.x=hostname:portNumber:portNumber。
+}}}
+
+== 监控 ==
+------------------------------------------------------
+{{{
+nimbus上，运行storm ui ,然后浏览器访问http://localhost:8080
+}}}
+
+== 部署任务  ==
+------------------------------------------------------
+{{{
+[root@cluster target]# storm jar storm-starter-0.0.1-SNAPSHOT.jar storm.starter.WordCountTopology wordcountTop
+}}}
+
+
+vi /etc/sysconfig/network　rhel修改主机名
+vi /etc/sysconfig/network-script/ifcfg-eth0 修改ＩＰ　
+多台机器，storm.yaml zoo.cfg要一致

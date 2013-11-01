@@ -1,0 +1,15 @@
+= nginx/unavailable modifier requested 30 uwsgi =
+----
+{{{
+your server socket listen backlog is limited to 100 connections
+*** Operational MODE: single process ***
+*** no app loaded. going in full dynamic mode ***
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 5207, cores: 1)
+-- unavailable modifier requested: 0 --
+-- unavailable modifier requested: 0 --
+-- unavailable modifier requested: 0 --
+-- unavailable modifier requested: 0 --
+
+}}}
+apt-get install uwsgi-plugin-python

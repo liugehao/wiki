@@ -1,0 +1,110 @@
+Describe c/c语言连接mysql here.
+----
+{{{
+apt-get install libmysqlclient-dev
+}}}
+{{{#!highlight sql
+create table t1( id integer auto_increment primary key ,name varchar(20), sex char[1]);
+}}}
+mysql.c文件：
+{{{#!highlight c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <mysql/mysql.h>
+
+#define MAX_COLUMN_LEN 32
+
+int main(int argc, char *argv[])
+{
+    MYSQL my_connection;
+    MYSQL_RES *result;
+    MYSQL_ROW sql_row;
+    MYSQL_FIELD *fd;
+    char column[MAX_COLUMN_LEN][MAX_COLUMN_LEN];
+    int res;
+    mysql_init(&my_connection);
+    if(mysql_real_connect(&my_connection, "127.0.0.1", "root", "liuyou", "test1", 3306, NULL, 0))
+    {
+        perror("Connect");
+        res = mysql_query(&my_connection, "select * from t1");
+        if(!res)
+        {
+            result = mysql_store_result(&my_connection);
+            if(result)
+            {
+                int i,j;
+                printf("the result nuber is %lu\n", (unsigned long)mysql_num_rows(result));
+                for(i=0;fd=mysql_fetch_field(result);i++)
+                {
+                    bzero(column[i], sizeof(column[i]));
+                    strcpy(column[i], fd->name);
+                }
+                j = mysql_num_fields(result);
+                for(i=0;i<j;i++)
+                {
+                    printf("%s\t", column[i]);
+                }
+                printf("\n");
+                while(sql_row=mysql_fetch_row(result))
+                {
+                    for(i=0;i<j;i++)
+                    {
+                        printf("%s\t",sql_row[i]);
+                    }
+                    printf("\n");
+                }
+            }
+        }
+        else
+        {
+            perror("select");
+        }
+    }
+    else
+    {
+        perror("connect:error");
+    }
+    //mysql_free_result(MYSQL_RES *result);//释放结果资源
+    mysql_free_result(result); //先释放，后插入
+    
+    char *name, sql[100];
+    char sex;
+    name = malloc(10);
+    printf("请输入名字:");
+    gets(name);
+    printf("性别:");
+    gets(&sex);
+
+    sprintf(sql, "insert into test1.t1 values (null,'%s', '%c');", name, sex);
+    printf(sql);
+    mysql_query(&my_connection, sql);
+    mysql_commit(&my_connection);
+    
+    mysql_close(&my_connection);
+}
+}}}
+
+编译：
+{{{
+l@x201i:~/tmp/gcc$ gcc mysql.c   && ./a.out
+/tmp/ccdPMZug.o: In function `main':
+mysql.c:(.text+0x23): undefined reference to `mysql_init'
+mysql.c:(.text+0x5e): undefined reference to `mysql_real_connect'
+mysql.c:(.text+0x85): undefined reference to `mysql_query'
+mysql.c:(.text+0xa1): undefined reference to `mysql_store_result'
+mysql.c:(.text+0xbc): undefined reference to `mysql_num_rows'
+mysql.c:(.text+0x12e): undefined reference to `mysql_fetch_field'
+mysql.c:(.text+0x145): undefined reference to `mysql_num_fields'
+mysql.c:(.text+0x1e3): undefined reference to `mysql_fetch_row'
+mysql.c:(.text+0x212): undefined reference to `mysql_free_result'
+mysql.c:(.text+0x2ad): undefined reference to `mysql_query'
+mysql.c:(.text+0x2bc): undefined reference to `mysql_commit'
+mysql.c:(.text+0x2cb): undefined reference to `mysql_close'
+collect2: error: ld returned 1 exit status
+
+}}}
+出错，增加　-l mysqlclient
+{{{
+l@x201i:~/tmp/gcc$ gcc mysql.c -l mysqlclient  && ./a.out
+}}}

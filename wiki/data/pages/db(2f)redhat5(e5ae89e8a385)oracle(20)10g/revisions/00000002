@@ -1,0 +1,17 @@
+= redhat5安装oracle 10g =
+----
+
+打开 database/install/oraparam.ini，操作如下：
+修改
+{{{
+Linux=redhat-3,SuSE-9,redhat-4,redhat-5,UnitedLinux-1.0,asianux-1,asianux-2]
+}}}
+增加：
+{{{
+[Linux-redhat-5.0-optional]
+TEMP_SPACE=80
+SWAP_SPACE=150
+MIN_DISPLAY_COLORS=256
+}}}
+ 
+参照oracle官网 http://www.oracle.com/technetwork/articles/saternos-kickstart-098543.html

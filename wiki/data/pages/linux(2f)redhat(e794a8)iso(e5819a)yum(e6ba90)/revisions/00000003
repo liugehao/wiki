@@ -1,0 +1,23 @@
+= redhat用iso做yum源 =
+
+ 1. 挂载ISO文件
+  {{{
+#mount -o loop RHEL_5.7\ x86_64.iso /media}}}
+ 1. 增加一个REPO文件
+  {{{
+# vi /etc/yum.repos.d/abc.repo
+-------------------------------------------------------------------------------
+[Server]
+name=rhel6server
+baseurl=file:///media/Server
+enable=1
+gpcheck=1
+gpgkey=file:///media/Server/RPM-GPG-KEY-redhat-release
+}}}
+ 1. 更新源
+  {{{
+#yum update
+}}}
+
+----
+ CategoryRedhat CategoryLinux

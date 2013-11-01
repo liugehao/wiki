@@ -1,0 +1,140 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnFormatting
+##master-date:2010-08-22T03:13:39Z
+#acl -All:write Default
+#format wiki
+#language zh
+
+= 排版 =
+<<TableOfContents>>
+
+本页说明 MoinMoin 使用的维基语法（注意：只是基本语法，但不是唯一的语法）。其他语法参见
+[[帮助-分析]]。
+
+== 基本规则 ==
+
+ * 每个段落之间用一个或多个空行分隔。
+ * 使用`<<BR>>`[[帮助-宏|宏]]在段落内分行。
+
+== 文字样式 ==
+
+||<rowbgcolor="#ffffcc">''' 名称/示例''' || ''' 标记 '''       || ''' 注意事项 '''          ||
+||  ''斜体''       || `''斜体''`         || 每边各用两个单引号        ||
+||  '''粗体'''     || `'''粗体'''`       || 每边各用三个单引号        ||
+||  等宽         || {{{`等宽`}}}       || 每边各用一个backticks '`'，其中的Wiki标记将被忽略。 <<BR>>因为有的浏览器会产生换行问题，所以应当尽量避免大段文字使用这个标记，尤其是在表格中的文字。||
+||  代码     || `{{{代码}}}`       || 其中的Wiki标记将被忽略。[[#codeexample|示例]] ||
+||  __下划线__     || `__下划线__`       ||                         ||
+||  ^上^标         || `^上^标`           ||                         ||
+||  ,,下,,标       || `,,下,,标`         ||                         ||
+||  ~-小号字体-~   || `~-小号字体-~`     ||                         ||
+||  ~+大号字体+~   || `~+大号字体+~`     ||                         ||
+|| --(删除线)--    || `--(删除线)--`     || MoinMoin 1.5 以上版本支持   ||
+
+== 彩色文字  ==
+
+如果不使用宏，那么彩色文字只能在表格中使用。（参见[[帮助-表格]]）
+
+##Or install the macro [[http://moinmo.in/MacroMarket/Color2|Color2]].
+
+
+== 彩色源代码展示 ==
+
+有几种方法可以用来展示彩色的源程序代码:
+
+ 1. 在源程序代码的第一行插入并只包含 `{{{#!分析插件名`
+ 1. 通过{{{"inline:"}}}嵌入一个以".py"为扩展名的附件。
+ 1. 在网页的开始插入处理指令 `"#format 分析插件名`
+
+[[#SyntaxHighlighting|点击查看示例。]]
+
+!MoinMoin 内置一个基于 [[http://pygments.org/|Pygments]] 的名为[[帮助-分析插件#The_highlight_parser|语法高亮]]的特殊分析器。
+
+你可以使用它来高亮任何程序代码、配置文件或其他类型的文本文件。
+
+== 示例 ==
+
+=== 混合''斜体''和'''粗体''' ===
+<<Anchor(italic_bold_example)>>
+
+||<rowbgcolor="#ffffcc">'''标记''' || '''显示结果'''            ||
+|| `'''''混合'''在开头''`          ||  '''''混合'''在开头''     ||
+|| `'''''混合''在开头'''`          ||  '''''混合''在开头'''     ||
+|| `'''混合''在结尾'''''`          ||  '''混合''在结尾'''''     ||
+|| `''混合'''在结尾'''''`          ||  ''混合'''在结尾'''''     ||
+
+
+=== 上标 & 下标 ===
+
+标记语言：
+
+{{{
+`You might recall ''a''^2^ `+` ''b''^2^ `=` ''c''^2^ from your math lessons, unless your head is filled with H,,2,,O.`
+}}}
+
+显示结果：
+
+You might recall ''a''^2^ `+` ''b''^2^ `=` ''c''^2^ from your math lessons, unless your head is filled with H,,2,,O.
+
+<<Anchor(codeexample)>>
+=== 代码 ===
+
+标记语言：
+
+{{{{
+{{{
+10 PRINT "Hello, world!"
+20 GOTO 10
+}}}
+}}}}
+
+显示结果：
+
+{{{
+10 PRINT "Hello, world!"
+20 GOTO 10
+}}}
+
+==== 嵌套花括号 ====
+
+在[[帮助-分析插件]]中提到，花括号可以嵌套使用：
+
+标记语言：
+
+{{{{{
+{{{{ 
+This is a preformatted text block.
+{{{ with curly braces inside }}}
+}}}}
+}}}}}
+
+显示结果：
+{{{{
+This is a preformatted text block.
+{{{ with curly braces inside }}}
+}}}}
+
+
+<<Anchor(SyntaxHighlighting)>>
+==== 彩色代码 ====
+
+标记语言：
+
+{{{{
+{{{#!highlight python
+from colors import palette
+palette.colorize('python')
+}}}
+}}}}
+
+
+显示结果：
+{{{#!highlight python
+from colors import palette
+palette.colorize('python')
+}}}
+
+
+
+
+此页的英文版本：HelpOnFormatting

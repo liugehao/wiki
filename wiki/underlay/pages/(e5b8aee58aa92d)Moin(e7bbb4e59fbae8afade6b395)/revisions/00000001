@@ -1,0 +1,394 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+## page was renamed from SyntaxReference
+##master-page:HelpOnMoinWikiSyntax
+##master-date:2010-11-11T06:03:50Z
+#acl -All:write Default
+#format wiki
+#language zh
+= Moin 维基语法 =
+<<TableOfContents()>>
+本页提供 !MoinMoin 语法中最重要的元素的概览。内容的形式为维基标记语言加上页面显示示例。附加的，你会发现一些相关的帮助页面的链接。请注意：其中有些功能会根据你的维基网站设置不同而不同。
+
+== 标题和目录 ==
+'''''参见：''' [[帮助-标题]]''
+{{{
+目录：
+<<TableOfContents()>>
+
+目录（到二级标题为止）：
+<<TableOfContents(2)>>
+
+= heading 1st level =
+== heading 2nd level ==
+=== heading 3rd level ===
+==== heading 4th level ====
+===== heading 5th level =====
+====== no heading 6th level ======
+}}}
+{{{#!wiki dashed
+目录：
+<<TableOfContents()>>
+
+目录（到二级标题为止）：
+<<TableOfContents(2)>>
+
+= heading 1st level =
+== heading 2nd level ==
+=== heading 3rd level ===
+==== heading 4th level ====
+===== heading 5th level =====
+====== no heading 6th level ======
+}}}
+
+== 文字排版 ==
+'''''参见：''' [[帮助-排版]]''
+||<rowbgcolor="#ffffcc" width="50%"> '''标记''' || '''结果'''   ||
+||  `''斜体''`     || ''斜体''       ||
+||  `'''加粗'''`     || '''加粗'''       ||
+||  {{{`等宽`}}} || `等宽`  ||
+||  `{{{代码}}}`     || {{{代码}}}       ||
+||  `__下划线`  || __下划线__   ||
+||  `^上^标`  || ^上^标    ||
+||  `,,下,,标`  || ,,下,,标||
+||  `~-更小-~`    || ~-更小-~     ||
+||  `~+更大+~`     || ~+更大+~       ||
+|| `--(删除线)--`    || --(删除线)--     ||
+
+
+== 超链接 ==
+'''''参见：''' [[帮助-链接]]''
+
+
+=== 内部链接 ===
+||<rowbgcolor="#ffffcc" width="50%"> '''标记''' || '''结果''' ||
+|| `FrontPage` || FrontPage ||
+|| `[[FrontPage]]` || [[FrontPage]] ||
+|| `HelpOnEditing/SubPages` || HelpOnEditing/SubPages ||
+|| `/SubPage` || /SubPage ||
+|| `../SiblingPage` || ../SiblingPage ||
+|| `[[FrontPage|named link]]` || [[FrontPage|named link]] ||
+|| `[[#anchorname]]` || [[#anchorname]] ||
+|| `[[#anchorname|description]]` || [[#anchorname|description]] ||
+|| `[[PageName#anchorname]]` || [[PageName#anchorname]] ||
+|| `[[PageName#anchorname|description]]` || [[PageName#anchorname|description]] ||
+|| `[[attachment:filename.txt]]` || [[attachment:filename.txt]] ||
+
+
+=== 外部链接 ===
+||<rowbgcolor="#ffffcc" width="50%"> '''标记''' || '''结果''' ||
+|| `http://moinmo.in/` || http://moinmo.in/ ||
+|| `[[http://moinmo.in/]]` || [[http://moinmo.in/]] ||
+|| `[[http://moinmo.in/|MoinMoin Wiki]]` || [[http://moinmo.in/|MoinMoin Wiki]] ||
+|| `[[http://static.moinmo.in/logos/moinmoin.png]]` || [[http://static.moinmo.in/logos/moinmoin.png]] ||
+|| `{{http://static.moinmo.in/logos/moinmoin.png}}` || {{http://static.moinmo.in/logos/moinmoin.png}} ||
+|| `[[http://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]` || [[http://static.moinmo.in/logos/moinmoin.png|moinmoin.png]] ||
+|| `MeatBall:InterWiki` || MeatBall:InterWiki ||
+|| `[MeatBall:InterWiki|InterWiki page on MeatBall]]` || [[MeatBall:InterWiki|InterWiki page on MeatBall]] ||
+|| `[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]` || [[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]] ||
+|| `user@example.com` || user@example.com ||
+
+
+
+=== 避免或限制自动链接 ===
+||<rowbgcolor="#ffffcc" width="50%"> '''标记''' || '''结果''' ||
+|| `Wiki''''''Name` || Wiki''''''Name ||
+|| {{{Wiki``Name}}} || Wiki``Name ||
+|| `!WikiName` || !WikiName ||
+|| `WikiName''''''s` || WikiName''''''s ||
+|| {{{WikiName``s}}} || WikiName``s ||
+|| {{{`http://www.example.com`}}} || `http://www.example.com` ||
+|| `[[http://www.example.com/]]notlinked` || [[http://www.example.com/]]notlinked ||
+
+
+== 绘图 ==
+'''''参见：''' [[帮助-绘图]]''
+=== TWikiDraw ===
+ {{drawing:myexample}}
+
+=== AnyWikiDraw ===
+ {{drawing:myexample.adraw}}
+
+== 块引用和缩进 ==
+{{{
+ 缩进的文字
+  再缩进一点
+}}}
+{{{#!wiki dashed
+ 缩进的文字
+  再缩进一点
+}}}
+
+== Lists ==
+'''''参见：''' [[帮助-列表]]''
+=== 无序列表 ===
+{{{
+ * item 1
+
+ * item 2 （以空格开头）
+  * item 2.1
+   * item 2.1.1
+ * item 3
+  . item 3.1 （没有项目符号）
+ . item 4 （没有项目符号）
+  * item 4.1
+   . item 4.1.1 （没有项目符号）
+}}}
+{{{#!wiki dashed
+ * item 1
+
+ * item 2 （以空格开头）
+  * item 2.1
+   * item 2.1.1
+ * item 3
+  . item 3.1 （没有项目符号）
+ . item 4 （没有项目符号）
+  * item 4.1
+   . item 4.1.1 （没有项目符号）
+}}}
+
+=== 有序列表 ===
+==== 数字 ====
+{{{
+ 1. item 1
+   1. item 1.1
+   1. item 1.2
+ 1. item 2
+}}}
+{{{#!wiki dashed
+ 1. item 1
+   1. item 1.1
+   1. item 1.2
+ 1. item 2
+}}}
+==== 罗马数字 ====
+{{{
+ I. item 1
+   i. item 1.1
+   i. item 1.2
+ I. item 2
+}}}
+{{{#!wiki dashed
+ I. item 1
+   i. item 1.1
+   i. item 1.2
+ I. item 2
+}}}
+
+==== 字母 ====
+{{{
+ A. item A
+   a. item A. a)
+   a. item A. b)
+ A. item B
+}}}
+{{{#!wiki dashed
+ A. item A
+   a. item A. a)
+   a. item A. b)
+ A. item B
+}}}
+=== 定义列表 ===
+{{{
+ term:: definition
+ object::
+ :: description 1
+ :: description 2
+}}}
+{{{#!wiki dashed
+ term:: definition
+ object::
+ :: description 1
+ :: description 2
+}}}
+
+== 横线 ==
+'''''参见：''' [[帮助-横线]]''
+{{{
+----
+-----
+------
+-------
+--------
+---------
+----------
+}}}
+{{{#!wiki dashed
+----
+-----
+------
+-------
+--------
+---------
+----------
+}}}
+
+== 表格 ==
+'''''参见：''' [[帮助-表格]]''
+=== 表格 ===
+{{{
+||'''A'''||'''B'''||'''C'''||
+||1      ||2      ||3      ||
+}}}
+{{{#!wiki dashed
+||'''A'''||'''B'''||'''C'''||
+||1      ||2      ||3      ||
+}}}
+=== 单元宽度 ===
+{{{
+||最小宽度 ||<99%>最大宽度 ||
+}}}
+{{{#!wiki dashed
+||最小宽度 ||<99%>最大宽度 ||
+}}}
+
+=== 跨行和跨列 ===
+{{{
+||<|2> 跨两行的单元格 ||第二列的单元格 ||
+||第二列第二行的单元格 ||
+||<-2> 跨两列的单元格 ||
+||||可以使用空单元格作为简写方式 ||
+}}}
+{{{#!wiki dashed
+||<|2> 跨两行的单元格 ||第二列的单元格 ||
+||第二列第二行的单元格 ||
+||<-2> 跨两列的单元格 ||
+||||可以使用空单元格作为简写方式 ||
+}}}
+
+=== 单元格中内容的对齐 ===
+{{{
+||<^|3> 顶端对齐（合并单元格） ||<:99%> 居中对齐（合并单元格） ||<v|3> 底端对齐（合并单元格） ||
+||<)> 右对齐 ||
+||<(> 左对齐 ||
+}}}
+{{{#!wiki dashed
+||<^|3> 顶端对齐（合并单元格） ||<:99%> 居中对齐（合并单元格） ||<v|3> 底端对齐（合并单元格） ||
+||<)> 右对齐 ||
+||<(> 左对齐 ||
+}}}
+
+=== 彩色单元格 ===
+{{{
+||<#0000FF> 蓝 ||<#00FF00> 绿 ||<#FF0000> 红 ||
+||<#00FFFF> 青 ||<#FF00FF> 紫 ||<#FFFF00> 黄 ||
+}}}
+{{{#!wiki dashed
+||<#0000FF> 蓝 ||<#00FF00> 绿 ||<#FF0000> 红 ||
+||<#00FFFF> 青 ||<#FF00FF> 紫 ||<#FFFF00> 黄 ||
+}}}
+
+=== HTML 类似语法 ===
+{{{
+||A ||<rowspan="2"> like <|2> ||
+||<bgcolor="#00FF00"> like <#00FF00> ||
+||<colspan="2"> like <-2>||
+}}}
+{{{#!wiki dashed
+||A ||<rowspan="2"> like <|2> ||
+||<bgcolor="#00FF00"> like <#00FF00> ||
+||<colspan="2"> like <-2>||
+}}}
+
+== 宏和变量 ==
+=== 宏 ===
+'''''参见：''' [[帮助-宏]]''
+ * <<Anchor(anchorname)>>`<<Anchor(anchorname)>>` 插入一个名为 `anchorname` 的锚链接
+ * `<<BR>>` 插入一个硬换行
+ * `<<FootNote(Note)>>` 插入一个内容为 `Note` 的脚注
+ * `<<Include(HelpOnMacros/Include)>>` 把 `HelpOnMacros/Include` 页面内容插入当前行
+ * `<<MailTo(user AT example DOT com)>>` 对于未登录用户可以模糊电子邮件地址
+
+=== Variables ===
+'''''参见：''' 帮助-变量''
+ * `@``SIG``@` 插入登录名和修改时的时间戳
+ * `@``TIME``@` 插入日期和修改时的时间戳
+
+== 笑脸和图标 ==
+'''''参见：''' [[帮助-表情]]''
+<<ShowSmileys>>
+
+== Parsers ==
+'''''参见：''' [[帮助-解析]]''
+
+=== 原文显示 ===
+{{{{
+{{{
+def hello():
+    print "Hello World!"
+}}}
+}}}}
+
+{{{
+def hello():
+    print "Hello World!"
+}}}
+
+=== 语法高亮 ===
+{{{{
+{{{#!highlight python
+def hello():
+    print "Hello World!"
+}}}
+}}}}
+
+{{{#!highlight python
+def hello():
+    print "Hello World!"
+}}}
+
+=== 使用带 CSS 类的维基解析 ===
+{{{{
+{{{#!wiki red/solid
+This is wiki markup in a '''div''' with __css__ `class="red solid"`.
+}}}
+}}}}
+
+{{{#!wiki red/solid
+This is wiki markup in a '''div''' with __css__ `class="red solid"`.
+}}}
+
+== 警示 ==
+'''''参见：''' [[帮助-警示]]''
+
+{{{{
+{{{#!wiki caution
+'''不要过度使用警示'''
+
+警示应当小心使用。一个充满警示的页面会让人很不舒服并且难以理解。
+}}}
+}}}}
+
+{{{#!wiki caution
+'''不要过度使用警示'''
+
+警示应当小心使用。一个充满警示的页面会让人很不舒服并且难以理解。
+}}}
+
+
+== 注释 ==
+'''''参见：''' [[帮助-注释]]''
+
+{{{
+点击编辑栏上的“注释”来开关 /* 我是注释 */ 。
+}}}
+{{{#!wiki dashed
+点击编辑栏上的“注释”来开关 /* 我是注释 */ 。
+}}}
+
+
+{{{{
+{{{#!wiki comment/dashed
+这是一个带有 "comment dashed" 类的维基小节（参见 [[帮助-解析]] ）。
+
+也可以象上面一样开关。
+}}}
+}}}}
+
+{{{#!wiki comment/dashed
+这是一个带有 "comment dashed" 类的维基小节（参见 [[帮助-解析]] ）。
+
+也可以象上面一样开关。
+}}}
+
+此页的英文版本：HelpOnMoinWikiSyntax

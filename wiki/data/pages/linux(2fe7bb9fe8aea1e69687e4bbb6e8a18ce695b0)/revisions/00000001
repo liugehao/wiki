@@ -1,0 +1,53 @@
+= 统计文件行数 =
+----
+
+总结了一下有五种方法：
+
+　　现在有一个a文件
+
+　　第一种：
+
+　　{{{#!highlight bash
+ awk '{print NR}' a|tail -n1
+}}}
+
+
+
+　　第二种：
+
+　　begincwcw兄的这个：
+　　{{{#!highlight bash
+　　awk 'END{print NR}' a
+}}}
+
+
+
+　　第三种：
+　　{{{#!highlight bash 
+grep -n "" a|awk -F: '{print '}|tail -n1
+}}}
+
+
+
+　　第四种：
+
+　　honbj兄的也不错：
+　　{{{#!highlight bash
+ sed -n '$=' a
+}}}
+
+
+
+　　第五种
+　　{{{#!highlight bash
+ wc -l a|awk '{print }'
+}}}
+
+
+
+　　第六种
+　　{{{#!highlight bash
+cat a |wc -l
+}}}
+
+　

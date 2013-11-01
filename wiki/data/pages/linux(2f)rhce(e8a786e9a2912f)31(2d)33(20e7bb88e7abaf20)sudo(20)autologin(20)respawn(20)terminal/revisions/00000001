@@ -1,0 +1,61 @@
+Describe linux/rhce视频/31-33 终端 sudo autologin respawn terminal here.
+----
+== 31 tty pts ttys0 terminal ==
+
+
+tty1 tty2 tty3 ...虚拟控制台
+
+/dev/ttyS0 com口
+
+pstree 命令查看进程树时，所有进程的父进程为init(/etc/inittab)
+
+运行级别为2345时
+
+respawn 反复打开子进程 ,如果它监视的子进程被关闭，会自动启动
+
+运行/sbin/mingetty 打开虚拟控制台
+
+#/sbin/mingetty tty12 //执行此命令后，准备好tty12控制台
+
+/sbin/agetty ttyS0 //com
+
+
+xwindows下终端，伪终端 pts/0
+
+/dev/pts/ 多伪终端一个登录，多一个文件
+
+skill -9 pts/2 //杀掉进程及子进程
+
+
+
+== 32 讲解autologin-respawn　==
+x:5:respawnn:/etc/X11/prefdm --nodaemon #gdm kdm xdm
+ 图形界面
+
+6a:2345:respawn:/sbin/mingetty tty10 --autologin shrek 
+ 自动登录,F10控制台, exit后又重新登录
+
+init q 
+ 重载/etc/inittab
+
+
+== 33 用户权限体系及sudo ==
+dd < /dev/zero > /dev/sda 硬盘用０填充，数据没有了，也恢复不了
+
+dd < /dev/zero > /tmp/aa  用０填充aa文件
+
+相当于 dd if=/dev/zero of /tmp/aa
+
+visudo 命令实际是编辑/etc/sudo文件
+
+命令别名，一组命令
+
+主机别名，一些主机
+
+....
+
+shrek ALL = /bin/hostname //shrek用户从所有地方来，可以运行hostname
+
+%shrek ALL = /bin/hostname //%开头用户组
+
+shrek ALL = NOPASSWD: /sbin/hostname //不用输入密码

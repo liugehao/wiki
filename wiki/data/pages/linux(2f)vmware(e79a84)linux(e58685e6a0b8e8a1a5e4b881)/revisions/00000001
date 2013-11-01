@@ -1,0 +1,22 @@
+= vmware的linux内核补丁 =
+----
+
+ http://pavlinux.ru/vmware/
+下载相应的内核的补丁，安装。
+{{{
+
+# cd /usr/lib/vmware/modules;
+# wget http://pavlinux.ru/vmware/8.0.4/source.tar.lzma;
+# md5sum source.tar.lzma;
+e37e41a818a47ec868bdb493197aaf63 source.tar.lzma
+# tar -xf source.tar.lzma;
+# vmware-modconfig --console --install-all;
+}}}
+vmware版本，差不多就可以，主要是linux内核版本。
+
+比如vmware 8.0.2, kernel 3.5.0 用
+
+{{{
+Patches for VMware® Workstation 8.0.4 build-744019
+Tested with linux kernel 3.2.20 and 3.5.0-rc3+ (updated 17.06.2012) 
+}}}

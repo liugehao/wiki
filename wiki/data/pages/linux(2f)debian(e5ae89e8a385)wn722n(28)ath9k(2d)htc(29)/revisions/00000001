@@ -1,0 +1,15 @@
+Describe linux/debian安装wn722n(ath9k-htc) here.
+----
+
+ 1. Add a "non-free" component to /etc/apt/sources.list, for example:
+{{{
+# Debian 7.0 "Wheezy"
+deb http://http.debian.net/debian/ wheezy main contrib non-free
+}}}
+ 1. Update the list of available packages and install the firmware-atheros package:
+{{{
+# apt-get update && apt-get install firmware-atheros
+}}}
+ 1. Connect the device to your system. The ath9k_htc kernel module is automatically loaded for supported devices.
+
+ 1. Configure your wireless interface as appropriate. 

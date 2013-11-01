@@ -1,0 +1,33 @@
+== mysql中增加远程表federated支持 ==
+----
+
+在my.cnf中[mysqld]下增加一行
+
+{{{
+federated
+}}}
+重启mysql
+
+{{{#!highlight sql
+CREATE TABLE federated_table (
+
+   id    int(20) NOT NULL auto_increment,
+
+   name  varchar(32) NOT NULL default '',
+
+   other int(20) NOT NULL default '0',
+
+   PRIMARY KEY (id),
+
+   KEY name (name),
+
+   KEY other_key (other)
+
+)
+
+ENGINE=FEDERATED
+
+DEFAULT CHARSET=latin1
+
+CONNECTION='mysql://root@remote_host:9306/federated/test_table';
+}}}

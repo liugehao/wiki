@@ -1,0 +1,30 @@
+= sql语句分组 =
+----
+比如数据如下
+
+字段为
+id ,v_name,v_value
+{{{
+v_name v_value
+aa aa1 
+aa aa2
+aa aa3
+bb bb1 
+bb bb2
+bb bb3
+}}}
+按v_name分组
+如aa这一组,假设aa3为最新
+bb这一组,假设bb1为最新
+怎么样查询后使得记录为
+{{{
+aa aa3
+bb bb1 
+}}}
+{{{
+select
+t.v_name,
+(select v_value from test where v_name=t.v_name ORDER BY id DESC limit 1) as v_value
+FROM 
+(select v_name from test group by v_name) AS t 
+}}}

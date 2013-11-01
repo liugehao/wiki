@@ -1,0 +1,538 @@
+Describe linux/bash 笔记 here.
+----
+=== 命令组合 ===
+ ||管道|| | ||
+ ||<|4>重定向|| < 重定向输入。指定文件读取数据，而不是键盘输入||
+ ||> >> 重定向输出。将输出结果覆盖、追加到指定文件 ||
+ ||2> 2>> 标准错误输出。　结果覆盖、追加到指定文件||
+ ||&> &>> 将标准输出和错误信息覆盖、追加到指定文件 ||
+
+
+下面２条相同结果
+{{{
+find / -name shrek > /tmp/find 2>&1
+find / -name shrek &> /tmp/find 
+cat << EEE
+skjdf
+sfd
+EEE(^D)
+
+}}}
+ 多条命令的逻辑关系
+ || 逻辑与 ||&& 语名都执行成功。前面成功，执行后面的。如果前面失败，后面的不执行。||
+ ||逻辑或 ||　｜｜ 前面成功不执行后面。前面失败，执行后面的。||
+ ||逻辑分隔||；　按顺序执行多条语句 ||
+===　3 变量 ===
+----
+  环境变量，系统变量，用户变量.__env__查看所有变量
+ || 双引号 || " ||　允许引用、转义\ ||
+ ||单引号 ||'|| 不允许引用、转义||
+ ||反撇号 ||` $() ||以命令输出替换||
+
+ || $? || 前一条命令状态值　０为正常，其它为出错  ||
+ || $０ || 脚本自身程序名  ||
+ || $１－９ || 命令的１－９个参数  ||
+ || $* || 命令行所有参数的内容  ||
+ || $# || 命令行所有参数的个数  ||
+{{{
+#./t.sh abc def //输入 #?２个参数，第一个$1 abc，第二个$2是def #*是abc def
+
+}}}
+
+
+=== 数值运算及处理 ===
+'''expr''' expr 数值１　运算符　数值２
+'''$[]'''  $[数值１　运算符　数值２]
+{{{
+expr 2 + 3
+expr 2 - 3
+expr 2 \* 3  *号是bash通配符，需转义
+expr 2 / 3
+x = 2;y =3;
+echo $[ 3 * 3] 不需转义
+echo $[x * y]
+expr $x * $y
+}}}
+
+let 变量名++、let 变量名-- 
+{{{
+x = 4
+let x++;echo $x
+let x+=2; echo $x
+}}}
+随机数
+random 变量　
+{{{
+echo $RANDOM 默认范围0-32767
+echo $[RANDOM % 100] 0-100
+}}}
+生成数字序列　
+seq 首数　末数　#从１开始，首数可省略
+{{{
+#seq 3
+1
+2
+3
+#seq 3 5
+3
+4
+5
+}}}
+seq 首数 增量 末数
+{{{
+#seq 3 2 10
+3
+5
+7
+9
+}}}
+
+小数运算
+将计算交给'''bc'''
+{{{
+echo "34.3 - 3.4" | bc
+echo "scale=4;10/3" | bc #scale　限制小数位数
+}}}
+
+
+=== 字符串截取 ===
+
+ * 目录命令
+  . dirname 路径　不包括文件名或者最后的目录名
+  . basenme 文件名或者最后的路径名
+    {{{
+    #Var1 = "/etc/nginx/nginx.conf"
+    #dirname $Var1
+    /etc/nginx
+    #basename $Var1
+    nginx.conf
+    }}}
+ * 字符串替换
+  . expr substr $var1 开始位置 截取长度 //起始位置从１开始
+  . ${变量名称:起始位置:截取长度}  //起始位置从0开始
+  . 
+{{{
+#Var1 = "0123456739"
+#expr substr 4 3
+456
+#echo ${Var:4:3}
+567
+#echo ${Var::3} //从开头取
+123
+}}}
+  . ${Var1/3/0} //第一个３替换同成０
+  . ${Var1//3/0}　//所有的３都替换成０
+}}}
+ * 随机字符串
+  . 从/dev/urandom 获取随机字符（有可能乱码），能过/usr/bin/md5sum 生成纯ascii字符，再通过/usr/bin/cut截取固定长度的字符。cat urandom会一直出字符，只取第一行生成md5
+    {{{
+　　　head -1 /dev/urandom | md5sum
+      echo $var1 | cut -b 起始位置-结束位置 //开头字符可省略 cut -b -5；最后８个字符时，cut -b 18-
+      head-1 /dev/urandom |md5sum |cut -b -8 //取８个随机字符
+    }}}
+
+=== 17 输入输出管道及重定向 ===
+----
+    过滤器命令
+    输入输出重定向
+    输入源　输出到屏幕　cat ls
+    >标准正确输出
+    2> 标准错误输出
+
+    cat > /tmp/a 编写文件　Ｃtrl+d结束
+    下面２条相同结果
+    {{{
+    find / -name shrek > /tmp/find 2>&1
+    find / -name shrek &> /tmp/find 
+    }}}
+
+    编辑器　vi
+
+    {{{
+    cat << EEE
+    skjdf
+    sfd
+    EEE(^D)
+    }}}
+    写入a.txt
+    {{{
+    cat > a.txt <<<EEE
+    sdfsd
+    sfd
+    EEE
+    }}}
+    tr "a-z" "A-Z" 小写变大写
+    {{{
+    tr "a-z" "A-Z" < /etc/passwd
+
+    ls /etcl -l |grep '^l' |wc -l
+    }}}
+    在管道使用的时候，复制一份，tee 。比如想看下中间结果
+    {{{
+    l@x201i:~$ ll |grep '^[^d]'|tee /dev/pts/1 |wc -l
+    total 512304
+    -rwxr-xr-x  1 l l    221287 Nov 16  2010 aliedit.sh
+    -rw-r--r--  1 l l      8942 Jun 23 16:41 examples.desktop
+    -rw-rw-r--  1 l l      7307 Aug  5 15:02 pgadmin.log
+    -rw-rw-r--  1 l l 524288000 Jul 23 08:11 p.img
+    5
+    }}}
+    密码替换
+    {{{
+    l@x201i:~$ tr '"a-m""n-z""A-M""N-Z"' '"N-Z""A-M""n-z""a-m"'
+    i love you very much
+    V YBIR LBH IREL ZHPU
+    }}}
+    加密文件
+    {{{
+    tr '"a-m""n-z""A-M""N-Z"' '"N-Z""A-M""n-z""a-m"' < /etc/passwd　> passwd.bak
+    }}}
+    passwd加密码后邮件发出
+    {{{
+    tr '"a-m""n-z""A-M""N-Z"' '"N-Z""A-M""n-z""a-m"' |mail -s "for you " abc@baidu.com
+    }}}
+
+== 6 条件测试 ==
+----
+ * 测试操作规范
+  . 测试的本质
+  　　. 是一条命令
+  　　. 根据　$?　返回前一条命令返回的状态。成功为0,再则不成功
+  . 操作规范
+     . 格式1 test 条件表达式
+     . 格式2: [ 条件表达式 ]
+  . 练习方法
+    . 直接跟 && echo YES 判断结果
+    . 用法： [ 条件表达式 ] && echo YES
+    {{{
+        l@x201i:~$ ls -dl /etc/grub/ /boot/grub
+        ls: cannot access /etc/grub/: No such file or directory
+        drwxr-xr-x 5 root root 5120 Jul 30 07:30 /boot/grub
+        l@x201i:~$ [-d "/etc/grub" ] && echo YES //前面要有空格，-d 是否为目录
+        bash: [-d: command not found
+        l@x201i:~$ [ -d "/etc/grub" ] && echo YES
+        l@x201i:~$ [ -d "/boot/grub" ] && echo YES
+        YES
+
+    }}}
+
+ * 文件状态检测
+   . 存在及识别
+    . -e: 目标是否存在 (Exist)
+    . -d: 是否为目录 (Directory)
+    . -f: 是否为文件（File)
+  . 权限的检测
+    . -r:　是否有读取的权限(Read)
+    . -w: 是否有写入权限(Write)
+    . -x: 是否有执行权限(eXcute)
+    {{{
+      ls -l /etc/shadow //只有root用户有写入权限，root组也无读取权限。文件所有者可写文件
+      [ -x "/etc/shadow"] && echo YES
+    }}}
+ * 整数值比较、字母匹配
+  . -eq: 等于 (Equal)
+  . -ne: 不等于 (Not Equal)
+  . -gt: 大于　(Greater Than)
+  . -lt: 小于 (Lesser Than)
+  . -ge: 大于或等于 (Greater or Equal)
+  . -le: 小于或等于 (Lesser or Equal)
+  {{{
+        root@x201i:/home/l# who |wc -l
+        3
+        root@x201i:/home/l# [ $(who | wc -l ) -eq 2] && echo YES
+        bash: [: missing `]' //方括号前附近都要有空格
+        root@x201i:/home/l# [ $(who | wc -l ) -eq 2 ] && echo YES
+        root@x201i:/home/l# [ $(who | wc -l ) -eq 3 ] && echo YES
+        YES
+        root@x201i:/home/l#
+  }}}
+ * 字符串匹配
+  . =:  两人个字符串相同
+  . !=: 两个字符串不相同
+  . 字符串可以用<、>，不常用
+  {{{
+    root@x201i:/home/l# echo $USER
+    root
+    root@x201i:/home/l# [ $USER != "root" ] && echo YES
+    root@x201i:/home/l# [ $USER = "root" ] && echo YES
+    YES
+  }}}
+
+
+== 使用if判断结构 ==
+----
+ * 程序流控制
+  . 执行过程顺序化、自动化
+ * 单分支／双分支的if应用
+   . 单分支结构
+   {{{
+     if 条件测试
+         then 命令序列
+     fi
+     //检查目录/opt/mrepo是否存在，不存在则创建
+     BACK_DIR="/opt/mrepo"
+     if [ ! -d $BACK_DIR ] 
+     then
+       mkdir -p $BACK_DIR
+     fi
+     
+     //双分支
+     
+     if 条件测试
+     then 命令序列1
+     else 命令序列2
+     fi
+     检查目标主机是否存活，显示检测结果
+     #!/bin/bash
+     ping -c 3 -i 0.2 -W 3 $1 &> /dev/null
+     if [ $? -eq 0 ]
+     then 
+         echo "host $1 is up."
+     else
+         echo "host $1 is down."
+     fi
+   }}}
+   
+ * 多重分支的应用
+   {{{
+     if 条件测试１
+         then 命令序列１
+     elif 条件测试２
+         then 命令序列２
+     ... ...
+     else
+         命令序列
+     fi
+     
+     #!/bin/bash
+     read -p "请输入您的分数（0-100）：" GRADE
+     if [ $GRADE -ge 85 ]  && [ $GRADE -le 100 ]; then
+         echo "$GRADE 分!优秀"
+     elif [ $GRADE -ge 70 ] && [ $GRADE -le 84 ]; then
+         echo "$GRADE 分,合格"
+     else
+         echo "$GRADE 分？不合格"
+     fi
+
+   }}}
+
+== 8 使用for循环 ==
+----
+ * for语句结构
+   {{{
+     for 变量名 in 取值列表
+     do
+         命令序列
+     done
+     
+     for i in "1st" "2nd" "3rd"
+     do
+       echo $i;
+     done
+     
+     逐词输出/etc/host.conf
+     for i in $(cat /etc/host.conf)
+     do
+       echo $i
+     done
+     
+     给一个users.txt 每行一个用户名称，初始口令1223456, 首次登录必须改密码,chage 更改密码天数
+     for i in $(cat /root/users.txt)
+     do
+       useradd $i
+       echo "123456" | passwd --stdin $i
+       chage -d 0 $i
+     done
+     
+     检测一个ＩＰ范围主机状态192.168.1.1 -192.168.1.10
+     
+     IP_PRE="192.168.1."
+     for IP in $(seq 1 10)
+     do
+       ping -c 3 -i 0.2 -W 3 ${IP_PRE}$IP &> /dev/null
+       if [ $? -eq 0 ]; then
+         echo "${IP_PRE}$IP is up."
+       else
+         echo "${IP_PRE}$IP is down."
+       fi
+     done
+     
+    }}}
+
+== 9 使用case分支 ==
+ * 服务脚本格式
+    {{{
+    case 变量值 in 
+    模式１）
+        命令序列１
+        ;;
+    模式２）
+        命令序列２
+        ;;
+        ......
+        
+    *)
+        默认命令序列
+    esac
+    }}}
+    {{{
+    case 控制参数 in
+    start)
+        启动ＸＸ服务
+        ;;
+    stop)
+        停止ＸＸ服务
+        ;;
+        ......
+    *)
+        显示服务脚本的用法
+    esac
+    }}}
+ * 例子
+    {{{
+    #!/bin/bash
+    read -p "请输入一个字符，并按回车确认：" KEY
+    case "$KEY" in
+    [a-z]|[A-Z])
+        echo "您输入的是字母。"
+        ;;
+    [0-9])
+        echo "您输入的是数字。"
+        ;;
+    *)
+        echo "您输入的是空格、功能键或控制字母。"
+    esac
+        
+        
+        
+    #!/bin/bash
+    case "$1" in
+    start)
+        sleep 3600 &
+        ;;
+    stop)
+        pkill -x "sleep"
+        ;;
+    *)
+        echo "用法： $0 (start|stop|"
+    esac
+    }}}
+    运行：
+    {{{
+    l@x201i:~/tmp/bash$ ./sleep.sh start
+    l@x201i:~/tmp/bash$ pgrep -lx "sleep"
+    6788 sleep
+    l@x201i:~/tmp/bash$ ./sleep.sh stop
+    l@x201i:~/tmp/bash$ pgrep -lx "sleep"
+    l@x201i:~/tmp/bash$ ./sleep.sh 
+    用法： ./sleep.sh (start|stop|
+    }}}
+
+ * 添加为系统服务
+    在脚本开头设置chkconfig参数
+
+    checkconfig： - 90 10
+    告诉checkconfig需要哪几个运行级别。切换运行级别时启动进程顺序是９０，停止顺序是１０
+    description: Daemon script for sleepd Server
+    说明
+
+    系统服务文件放在/etc/init.d目录下
+    {{{
+    # cat /etc/init.d/sleepd
+    #!/bin/bash
+    checkconfig： - 90 10
+    description: Daemon script for sleepd Server
+    case "$1" in
+    start)
+        sleep 3600 &
+        ;;
+    stop)
+        pkill -x "sleep"
+        ;;
+    *)
+        echo "用法： $0 (start|stop|"
+    esac
+
+    # chkconfig --add sleepd　／／设置开机自动运行
+    }}}
+
+
+=== １０  awk 文本处理工具 ===
+ * awk基本命令格式
+    awk '模式  {操作}' 文件１  文件２
+    NR  当前处理行的序数（行号）
+    FS  字段间隔，缺省为空格或ＴＡＢ
+    $n  当前行的第n个字段
+    $0  当前行的所有文本内容
+  
+ * 常见用法示例
+    awk 'NR==1{print}' /etc/hosts
+    head -1 /etc/hosts
+   
+    NR指行号,相当于head,但输出第３行head做不到
+    {{{
+    l@x201i:~/tmp/bash$ cat file.txt 
+    1 This is the first line.
+    2 Hello, Everybody!
+    3 192.168.4.2 w2k8.benet.com
+    4 hunter:x:504:504::/home/hunter:/bin/bash
+    }}}
+    . awk 'NR==1,NR==3{print}' file.txt    输出第１至３行
+
+    . awk '(NR==1)||(NR==3){print}' file.txt    输出第一行和第三行
+
+    . awk '(NR%2)==1{print}' file.txt    输出奇数行
+
+    . awk '(NR%2)==0{print}' file.txt    输出偶数行
+
+    . awk '/2/{print}' file.txt
+
+    . awk '/bash$/{print}' file.txt     正则表达式
+
+    . awk "NR==2,NR==3{print $1,$3}' file.txt    输出第二行到第三行的第１，３列 
+
+    . awk -F. '$5=="benet"{print $0}' file.txt    点分隔，第五字段等于benet的行
+    
+    
+    {{{
+    l@x201i:~/tmp/bash$ awk '(NR==1)||(NR==3){print}' file.txt
+    1 This is the first line.
+    3 192.168.4.2 w2k8.benet.com
+    l@x201i:~/tmp/bash$ awk 'NR==1,NR==3{print}' file.txt
+    1 This is the first line.
+    2 Hello, Everybody!
+    3 192.168.4.2 w2k8.benet.com
+    }}}
+    
+    
+    
+=== sed 替换文本内容 ===
+ * 语法格式
+  . sed '编辑指令' 文件１　文件２　......
+  . sed -n '编辑指令' 文件１　文件２　......
+  . sed -i '编辑指令' 文件１　文件２　......
+  . -n 只输出编辑指令影响的行
+  . -i 直接修改源文件内容。不加-i,修改结果输出，不会修改有源文件
+  . sed -n '3,5p' /etc/host //p 相当于awk中的print,第３到５行
+  . 格式：[地址１[,地址２]操作类型
+  . 多条指令之间以分号隔开
+  　{{{
+  　sed -n '3p;5p' /etc/host
+  　打印第３行；打印第５行
+  　}}}
+  . p 输出/打印文件行
+  . n 取下一行文本（跳过当前行)
+  . d 删除
+  . s 字符串替换
+  . a 追加新文本
+  . sed -n 'p;n' file.txt //隔行输出, 奇数行
+  . sed -n 'n;p' file.txt //偶数行
+  . sed -n '/w2k8/.$p' file.txt //正则 从包含w2k8的行开始到最后，输出。$最后一行
+  . sed -n '/\<This\>/p' file.txt 包含单词This的行
+  . sed '2,3d' file.txt //输出删除第２到第三行文本后的结果，没有-i 不影响原文件
+  . sed '/w2k8/d;$d' file.txt //删除包含w2k8的行，删除最后一行
+  . sed '/ne/!d' file.txt //删除不符合条件的行
+  . sed '3,4s/hunter/BADBOY/g' file.txt //g 替换所有的，否则替换每行第一个。替换第３到第４行。行数省略，默认所有行。
+  . sed '1,2s/^/#/g' file.txt　//第１到２行，添加＃号
+  . sed 's/ter//g' file.txt //删除所有ter
+  

@@ -1,0 +1,61 @@
+= ubuntu上配置nfs =
+----
+本文主要介绍Ubuntu 10.04上NFS服务的安装、配置。
+
+安装NFS相关的软件包
+{{{
+$ sudo apt-get install nfs-kernel-server 
+}}}
+进行配置
+与之相关的配置文件有：
+
+/etc/default/nfs-kernel-server
+{{{
+NEED_SVCGSSD=no # no is default
+}}}
+注释： 因为我们并不打算启用NFSv4 安全配置
+注意： 如果启用，客户端也必须启用
+
+/etc/default/nfs-common
+这是一个common配置文件，也就是说服务器端和客户端都要有相同的配置。
+{{{
+NEED_IDMAPD=yes # 此项将打开ID映射
+NEED_GSSD=no # no is default
+}}}
+注释：ID映射用于解决服务器端UID与客户机UID不同，而无法访问资源的情况。通过UID映射，只需要相同的用户名即可。
+
+/etc/idmapd.conf
+既然启用了ID映射，就需要配置：
+{{{
+[Mapping]
+
+Nobody-User = nobody
+Nobody-Group = nogroup
+}}}
+/etc/exports
+{{{
+/home/lesca/ARM 192.168.1.0/24(rw,nohide,insecure,sync,no_root_squash)
+}}}
+选项解释：
+
+rw - 可读写
+nohide - 如果被挂载的目录下的其他目录也是挂载的，此选项将使它们可见
+insecure - 允许客户端不使用保留端口
+sync - 每次写操作要同步到物理存储器上（而不是仅写入内存）
+no_root_squash - 当客户端以root的UID/GID（=0）挂载时，不会分配一个匿名UID/GID（也就是说它创建的文件将属于root）
+重启NFS服务
+{{{
+$ sudo /etc/init.d/nfs-kernel-server restart
+}}}
+说明：如果只是更新/etc/exports，只需要运行
+{{{
+$ sudo exportfs -ra 
+}}}
+即可生效
+
+挂载
+客户端必须安装nfs-common
+{{{
+$ sudo apt-get install nfs-common
+$ sudo mount -t nfs 192.168.1.101:/home/lesca/ARM /home/lesca/test
+}}}

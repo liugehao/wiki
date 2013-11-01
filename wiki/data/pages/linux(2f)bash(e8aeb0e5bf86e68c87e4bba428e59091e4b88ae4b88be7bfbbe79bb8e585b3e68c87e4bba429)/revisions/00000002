@@ -1,0 +1,36 @@
+= bash记忆指令(向上下翻相关指令) =
+----
+在 FreeBSD 裡面，要做到這樣非常方便，當我們在終端機輸入 vi 之後按下 Up 鍵，終端機會顯示之前下過的 vi 指令，這在常常使用 command 的使用者來講相當方便，也非常重要
+
+在 FreeBSD 底下，只要在 .cshrc 裡面加上
+{{{
+    bindkey “^W” backward-delete-word
+    bindkey -k up history-search-backward
+    bindkey -k down history-search-forward
+}}}
+可是在 linux 底下要如何達到這樣呢，那就是 man bash『history-search-backward』，『history-search-forward』這兩個功能，對我來說非常重要，然而你 要達到這功能，就是利用 showkey 跟 bind 這兩個指令
+
+首先你要先找到 Up 這個鍵的 16 位元的編碼
+
+ 
+{{{
+#showkey -a
+
+Press any keys – Ctrl-D will terminate this program
+
+^[[A 27 0033 0x1b
+     91 0133 0x5b
+     65 0101 0x41
+}}}
+然後在 bind 上去，寫到 /etc/bashrc 地下就可以了
+{{{
+    bind ‘”\x1b\x5b\x41″:history-search-backward’
+    bind ‘”\x1b\x5b\x42″:history-search-forward’
+}}}
+
+== 我的输入 ==
+在.bashrc中增加：
+{{{
+bind '"\e[A":history-search-backward'
+bind '"\e[B":history-search-forward'
+}}}

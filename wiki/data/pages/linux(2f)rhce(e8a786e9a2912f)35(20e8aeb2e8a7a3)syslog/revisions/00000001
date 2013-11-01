@@ -1,0 +1,64 @@
+== 章节3 课时 35 讲解syslog ==
+
+tail -f /var/log/messages messages是程序首选信息输出。监视messages, 服务有问题，服务启动有问题　，首先看messages
+
+相似的，如果邮件出不去　，查看地邮件日志 /var/log/maillog
+
+apache /var/log/httpd/error_log 
+
+syslog 有２个组件 klogd syslogd
+
+klogd kernel日志,kernel 直接写日志　通过dmesg看日志缓存
+{{{
+dmesg　当前缓存
+cat /var/log/dmesg 缓存写到文件中
+}}}
+syslogd 
+
+klogd man 2 syslog
+
+
+syslogd 配置文件 /etc/syslog.conf
+
+syslogd man 3 syslog
+
+
+syslogd,klogd 共同配置文件　/etc/sysconfig/syslog
+
+
+syslog库，syslogd服务
+/etc/syslog.conf
+
+authpriv.*   /var/log/secure
+
+内容.级别　　写到哪个文件
+
+*.info;mail.none;authpriv.none;cron.none /var/log/messages
+所有的info及以上级别日志，除了mail.none... 与到messages
+
+
+'''日志写入：'''
+{{{
+root@x201i:/home/l# logger " `date` backup finish ....."
+root@x201i:/home/l# tail -1 /var/log/messages
+Aug 23 11:11:57 x201i l:  Fri Aug 23 11:11:57 CST 2013 backup finish .....
+}}}
+
+'''可以远程日志'''
+
+'''不要把大量的日志，写入到日志服务器（或者应用程序日志）
+紧急、报警日志写到日志服务器'''
+syslogd -r 
+
+日志服务器 192.168.0.1 
+{{{
+vi /etc/sysconfig/syslog
+SYSLOGD_OPTIONS="-m 0 -r"  #-m 0 不进行mark
+service syslogd restart
+}}}
+
+
+服务器１　/etc/syslog.conf
+*.alert @192.168.0.1
+logwatch
+netstat --antup

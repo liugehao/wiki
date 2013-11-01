@@ -1,0 +1,157 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnMacros
+##master-date:2006-05-01 19:59:48
+#acl -All:write Default
+#format wiki
+#language zh
+
+<<Navigation(children)>>
+<<TableOfContents>>
+
+== 宏命令 ==
+通过宏命令您可以在普通 wiki 页面中插入系统功能；使这种页面与众不同的唯一原因就是它们含有宏。如果你曾经编辑过类似 RecentChanges 或 SystemInfo 的页面，你就会看到宏是什么。
+
+关于更多可能出现的 wiki 标记，请看[[帮助-编辑]]。
+
+=== 用于查找的宏 ===
+||<tablewidth="100%">'''宏名'''||'''描述'''||'''示例'''||
+||<-3>`<<TitleSearch>>`     ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 查找页标题 || 请看 FindPage ||
+||<-3>`<<FullSearch>>`      ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 查找页内容 || 请看 FindPage ||
+||<-3>`<<FullSearch()>>`      ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 在所有的页面中查找当前页面的标题（就象点击页面标题的效果一样）|| 请看 CategoryCategory ||
+||<-3>`<<FullSearch('text')>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 在所有页面里查找字符串 "text" || 查找 {{{powered}}}：<<FullSearch('powered')>> ||
+||<-3>`<<FullSearchCached(text)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 类似于宏`FullSearch`但是将结果静态缓存. 当对速度有要求而对结果时效性无要求时可以使用 || 搜索 {{{powered}}}:<<FullSearchCached(powered)>> ||
+||<-3>`<<GoTo>>`            ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 直接跳转到您输入的页面 || 请看 FindPage ||
+||<-3>`<<PageList(Help)>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 标题可以匹配搜索内容的页面的列表 || 请看 HelpIndex ||
+
+
+=== 用于浏览的宏 ===
+||<tablewidth="100%">'''宏名'''||'''描述'''||'''示例'''||
+||<-3>`<<RecentChanges>>`   ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 最近被编辑的页面的列表 || 请看 RecentChanges ||
+||<-3>`<<TitleIndex>>`      ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有页标题的索引 || 请看 TitleIndex ||
+||<-3>`<<WordIndex>>`       ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有页标题中使用过的单词的索引 || 请看 WordIndex ||
+||<-3>`<<WantedPages>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有在 Wiki 系统中被引用的但实际并不存在的页面的列表 || 请看 WantedPages ||
+||<-3>`<<OrphanedPages>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有不被其他页面引用的页的列表 || 请看 OrphanedPages ||
+||<-3>`<<AbandonedPages>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 列出保持不被改动状态最长的页面 || 请看 AbandonedPages ||
+||<-3>`<<RandomPage>>`      ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 指向随机一个页面的链接 || <<RandomPage>> ||
+||<-3>`<<RandomPage(#)>>`   ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 指向 "#" 个随机页面的链接 || 两个随机链接：<<RandomPage(2)>> ||
+||<-3>`<<TableOfContents([maxdepth])>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示一个当前页面的目录，可以控制其最大深度 || 请看本页开头 ||
+||<-3>`<<Anchor(anchorname)>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 在页面中插入定位标记（锚链） || <<Anchor(这里)>>[[#这里]] ||
+||<-3>`<<Navigation(children[,maxdepth])>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 列出一个页面的所有子页面 || 请看本页开头 ||
+||<-3>`<<Navigation(siblings[,maxdepth])>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 列出所有兄弟页 || 请看 /MailTo ||
+||<-3>`<<Navigation(slideshow)>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 创建一个切换幻灯模式和wiki模式的链接，和一个开始幻灯模式的链接 || 请看[[帮助-放映幻灯片]] ||
+||<-3>`<<Navigation(slides)>>` ||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示 第一个/前一个/下一个/最后 链接 || 请看[[帮助-放映幻灯片]] ||
+||<-3>`<<AttachInfo>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示当前页的附件数目 || 请看[[帮助-操作/附件]] ||
+||<-3>`<<AttachInfo(page)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示页面page的附件数目 || 请看[[帮助-操作/附件]] ||
+||<-3>`<<AttachList>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示当前页的附件列表 || 请看[[帮助-操作/附件]] ||
+||<-3>`<<AttachList(page)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示页面page的附件列表displays list of attachments for page || 请看[[帮助-操作/附件]] ||
+
+
+
+
+=== 系统信息宏 ===
+||<tablewidth="100%">'''宏名'''||'''描述'''||'''示例'''||
+||<-3>`<<InterWiki>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有已知的 InterWiki 名的列表 || InterWiki ||
+||<-3>`<<SystemInfo>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 关于当前 wiki 的信息，python 解释器和系统 || SystemInfo ||
+||<-3>`<<PageCount(exists)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 当前页面总数. 如果给定参数`exists`, 则只会显示已存在的网页. || <<PageCount>> pages ||
+||<-3>`<<PageSize>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 所有页面的总大小 || 请看 PageSize ||
+||<-3>`<<StatsChart(type)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示统计图表（当前已定义类型：hitcounts（浏览次数）， pagesize（页面大小）， useragents（客户端类型）） || 请看 EventStats 及其子页面  ||
+||<-3>`<<SystemAdmin>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> wiki 管理员的 Web 管理界面 || 需要管理员权限.<<BR>> <<SystemAdmin>> ||
+
+
+=== 其他宏 ===
+||<tablewidth="100%">'''宏名'''||'''描述'''||'''示例'''||
+||<-3>`<<ImageLink(image,target[,width=width[,height=height]][,alt=alttag])>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 这个宏用于创建图片链接 (可以是附件或者URL) 以及链接至URL或者是维基页面. 图片大小可以调整. 如果链接位置没有给定，则会指向图片本身. || 请看 /ImageLink ||
+||<-3>`<<Icon(image)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示系统中所支持的小图标 || 请看[[帮助-导航]]||
+||<-3>`<<UserPreferences>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示用户首选项对话框 || 请看[[用户设置]] ||
+||<-3>`<<UserPreferences(createonly)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示新建用户对话框 ||  ||
+||<-3>`<<BR>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 插入一个断行符 || 第一行<<BR>>第二行 ||
+||<-3>`<<RandomQuote(pagename)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;">从指定的页面随机引用一句话，如果省略 pagename 将从 `FortuneCookies` 中引用 || <<RandomQuote>> ||
+||<-3>`<<Include(HelloWorld[,"heading"[,level]])>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 包含另一页的内容 || 详细使用方法请看 [[/Include]] ||
+||<-3>`<<FootNote(text)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 增加一个脚注<<FootNote(脚注中不能包含任何 wiki 标记)>>, 当省略参数 text 时，将在插入点显示所有已收集的脚注 || 请看下面的例子. ||
+||<-3>`<<Date(timestamp)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 根据系统设置显示一个时间戳 || <<Date>> ||
+||<-3>`<<DateTime(timestamp)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 根据用户设置显示一个时间戳<<FootNote("timestamp" 可以为空（代表当前时间），或者一个从1970年开始计算的秒数（ unix 时间），或者一个符合 W3C 时间表示规范的字符串（"2002-01-23T12:34:56"）。)>> || <<DateTime>> ||
+||<-3>`<<GetText(text)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 载入 I18N 文字 （主要用于帮助页面） || "Edit``Text" 将被转换为 "<<GetText(EditText)>>" ||
+||<-3>`<<TeudView>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 适用于内部网开发者 wiki ，可以察看通过 XSLT 样式表格式化的后的 pydoc 文档，详细用法请看 EfnetPythonWiki:TeudProject || 请看 http://twistedmatrix.com/wiki/python/TeudProject ||
+||<-3>`<<MailTo(email)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 防止你的邮件地址被垃圾邮件机器人搜集到 || 详细用法请看 /MailTo ||
+||<-3>`<<NewPage(PageTemplate,ButtonLabel,ParentPage[,NameTemplate])>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 让用户方便地创建(子)页面, 使用 `PageTemplate`作为新页面的模板, `NameTemplate` 作为名字的模板. <<FootNote(`NameTemplate`是经过`time.strftime()`格式化的，除了`%s`，它被编辑框中的输入所替代(只在必要的时候才会显示出来)。如果没有给定 `NameTemplate`或者它是空值，那么它的默认值是`%s`.)>> || <<NewPage(CategoryTemplate, 创建新分类,,Category%s)>>||
+||<-3>`<<GetVal(NeatSnippets,regards)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 从字典页面中获取字典值. || 如果你有页面 GermanDict，包含词条''Test'', 你可以在这里看到翻译的结果: <<GetVal(GermanDict,Test)>> ||
+||<-3>{{{<<MonthCalendar(,,12)>>`||
+||<5%><<BR>>||<^ 75% style="margin: 10px;"> 显示日历，而且每一天都具有链接，可以链接至一个子页面 || 请看 /MonthCalendar ||
+
+<<FootNote>>
+
+=== 自己编写宏命令 ===
+
+创建一个Python文件 {{{MacroName.py}}}，把它放置到 {{{data/plugin/macro}}} 目录下。确保该文件有一个单独的method {{{execute(macro, arguments)}}}，这个method是宏命令的入口。
+ * ''macro'' 是类 Macro 的一个实例，也被认为是宏命令的名字。
+ * ''arguments'' 是一个任意的字符串参数，你可以通过它把一些参数传入宏。
+
+所有的 {{{Macro}}} 实例都有一个 {{{request}}} 方法，你可以通过它获取form参数以及其他和用户交互有关的信息。
+   
+{{{execute()}}} 应该使用 formatter 来构造在当前格式内可用的标记。大多数情况下，就是HTML，所以大多数情况下编写一个返回HTML的宏是可行的。但是当格式是XML或者 `text/plain`时，就不行了。
+   
+例如，你的维基页面有下面几行:
+{{{
+<<MacroName(arg1,arg2,arg3)>>
+}}}
+   
+你可以编写一个 !MacroName.py 文件:
+{{{#!python
+Dependencies = []
+
+def execute(macro, args):
+    return macro.formatter.text("I got these args from a macro %s: %s" %
+    (str(macro), args))
+}}}
+
+ /!\ 如果从你的宏中输出的内容不应该被cached时，请在{{{Dependencies}}}中添加一个条目。当宏的输出可能随时间变化时，这一点很重要， 比如，如果你的宏搜索维基网页，而这些网页可能正在被其他用户编辑；又比如，信息从外部数据库中得来，而数据库中的内容可能改变。目前条目的值并不重要，可以被认为是 ''为什么这个宏的结果不应该被cached'' 的一种描述，不过也请你查看其他宏中所用的条目，找一些比较合适的值。
+
+<<FootNote>>
+此页的英文版本: HelpOnMacros

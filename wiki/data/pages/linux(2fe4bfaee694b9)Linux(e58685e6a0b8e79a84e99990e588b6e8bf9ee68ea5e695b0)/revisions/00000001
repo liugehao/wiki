@@ -1,0 +1,27 @@
+= 修改Linux内核的限制连接数 =
+----
+很多问题因这个而起，Nginx,memcached,php等连接数不够，都可能与这有关，所以装完Linux，第一件事，就要修改它。
+
+1.当前测试
+{{{
+# ulimit -n
+1024
+# cat /proc/sys/fs/file-max
+755070
+# ulimit -n 755070
+}}}
+2.编辑 /etc/sysctl.conf
+#在文件最末尾加入下面内容
+{{{
+fs.file-max = 755070
+}}}
+3.编辑 /etc/security/limits.conf
+星号代表全局， soft为软件，hard为硬件，nofile为这里指可打开文件数。
+{{{
+* soft nofile 755070
+* hard nofile 755070
+}}}
+4.编辑 /etc/pam.d/login
+session required /lib64/security/pam_limits.so
+
+5.重启系统。

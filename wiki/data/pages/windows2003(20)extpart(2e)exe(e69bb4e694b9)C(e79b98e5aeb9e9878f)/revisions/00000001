@@ -1,0 +1,5 @@
+= windows2003 extpart.exe更改C盘容量 =
+----
+extpart.exe
+
+解压后在 c:\dell\extpart\ 目录下 windows 2003 cmd下执行

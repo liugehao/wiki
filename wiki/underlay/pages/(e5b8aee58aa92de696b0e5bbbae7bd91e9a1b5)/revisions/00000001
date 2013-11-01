@@ -1,0 +1,63 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnPageCreation
+##master-date:2006-08-05 11:13:12
+#acl -All:write Default
+#format wiki
+#language zh
+
+
+= 创建新页面 =
+通过浏览页面可以创建一个新的页面。当我们访问一个不存在的页面时，MoinMoin会提示该网页不存在，并建议我们创建一个新的页面。下面详细介绍几种创建页面的方式。
+
+== 通过在页面中添加链接的方式 ==
+ 1. 编辑一个页面。
+ 1. 在页面中添加一个链接，用WiKiName的形式或`["新页面"]`都可以。
+ 1. 保存页面，点击链接。
+ 1. 选择一个模板（可选）。
+ 1. 编辑新页面并保存。
+
+关于如何链接到其它页面，请参考[[帮助-链接]]。
+
+== 通过访问页面的方式 ==
+ 1. 在浏览器上打上要新创建的页面名，如：`http://localhost:8080/newpage`，然后按回车。
+ 1. 选择一个模板（可选）。
+ 1. 编辑新页面并保存。
+
+(!) 如果新页面的名称不是ASCII字符，可能有些浏览器不支持该方式。
+
+== 使用NewPage宏 ==
+ 1. 在当前页面中添加一个创建新页面的宏， 如：`<<NewPage(HelpTemplate)>>`。
+ 1. 在文本栏填上新页面的名字，点击创建网页。
+ 1. 编辑新页面并保存。
+
+示例: <<NewPage(HelpTemplate)>> 
+
+`NewPage` 宏使得创建带模板和子页面的新页面只用一步就可轻易完成。有关`NewPage`宏的帮助，请参考[[帮助-宏]]。
+
+== 使用GoTo宏 ==
+ 1. 在当前页面中添加一个`GoTo`的宏，如：`<<GoTo>>`。
+ 1. 在文本栏填上新页面的名字，点击转到网页。
+ 1. 选择模板（可选）
+ 1. 编辑页面并保存。
+
+示例: <<GoTo>>
+
+== 创建和使用模板页 ==
+
+请参考[[帮助-模板]]。
+
+<<Anchor(variablesubstitution)>>
+= 设置变量 =
+
+请参考[[帮助-变量]]
+
+= 编者备份 =
+
+如果一个用户拥有一个用<<Icon(home)>>标识的主页<<FootNote(拥有主页就是说 wiki 中有一个和你的登录名同名的页面。)>>，他的所保存的和预览的内容将以子页面 `Home``Page``Name/Moin``Editor``Backup` （允许生成子页面时）的形式或者以页面 `Home``Page``Name``Moin``Editor``Backup` （不允许生成子页面）的形式备份。
+
+所以，如果你有经常预览的习惯，即使你的浏览器崩溃了你也不会丢失你所作的修改。
+
+注意：此功能曾经通过一个名为 `moin-editor-backup.txt` 的主页附件来实现，但是由于一些安全问题的出现而引入访问``控制``列表（参见 [[帮助-访问权限控制表]]）后，改成了现在的方式。
+
+此页的英文版本：HelpOnPageCreation

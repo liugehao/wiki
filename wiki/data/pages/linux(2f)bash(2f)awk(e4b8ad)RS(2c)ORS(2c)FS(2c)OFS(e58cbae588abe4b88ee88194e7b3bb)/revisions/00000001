@@ -1,0 +1,140 @@
+== linux/bash/awk中RS,ORS,FS,OFS区别与联系 ==
+----
+学习awk时，一定要记得动手去实践，只有在实践中才能发现问题，以下就我在学习中和实践中的经验，总结一下RS,ORS,FS,OFS的区别和联系。
+
+'''一，RS与ORS'''
+
+1，RS是记录分隔符，默认的分隔符是\n，具体用法看下
+
+1. [root@krlcgcms01 mytest]# cat test1     /* //测试文件 */
+
+ 1. 111 222
+ 1. 333 444
+ 1. 555 666
+
+2，RS默认分割符\n
+
+1. [root@krlcgcms01 mytest]# awk '{print $0}' test1  /* //awk 'BEGIN{RS="\n"}{print $0}' test1 这二个是一样的 */
+
+ 1. 111 222
+ 1. 333 444
+ 1. 555 666
+
+其实你可以把'''上面test1文件里的内容理解为，111 222\n333 444\n555 6666，利用\n进行分割'''。看下一个例子
+
+3，自定义RS分割符
+
+ 1. [zhangy@localhost test]$ echo "111 222|333 444|555 666"|awk 'BEGIN{RS="|"}{print $0,RT}'
+
+ 1. 111 222 |
+ 1. 333 444 |
+ 1. 555 666
+
+结合上面一个例子，就很容易理解RS的用法了。
+
+4，RS也可能是正则表达式
+
+1. [zhangy@localhost test]$ echo "111 222a333 444b555 666"|awk 'BEGIN{RS="[a-z]+"}{print $1,RS,RT}'
+
+ 1. 111 [a-z]+ a
+ 1. 333 [a-z]+ b
+ 1. 555 [a-z]+
+
+从例3和例4，我们可以发现一点，'''当RT是利用RS匹配出来的内容。如果RS是某个固定的值时，RT就是RS的内容'''。
+
+5，RS为空时
+
+1. [zhangy@localhost test]$ cat -n test2
+
+ 1. 1  111 222
+ 1. 2
+ 1. 3  333 444
+ 1. 4  333 444
+ 1. 5
+ 1. 6
+ 1. 7  555 666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{RS=""}{print $0}' test2
+ 1. 111 222
+ 1. 333 444
+ 1. 333 444
+ 1. 555 666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{RS="";}{print "<",$0,">"}' test2  /* //这个例子看着比较明显 */
+ 1. < 111 222 >
+ 1. < 333 444     /* //这一行和下面一行，是一行 */
+ 1. 333 444 >
+ 1. < 555 666 >
+
+从这个例子，'''可以看出当RS为空时，awk会自动以多行来做为分割符'''。
+
+6，ORS记录输出分符符，默认值是\n
+
+'''把ORS理解成RS反过程，这样更容易记忆和理解'''，看下面的例子。
+
+1. [zhangy@localhost test]$ awk 'BEGIN{ORS="\n"}{print $0}' test1  /* //awk '{print $0}' test1二者是一样的 */
+
+ 1. 111 222
+ 1. 333 444
+ 1. 555 666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{ORS="|"}{print $0}' test1
+ 1. 111 222|333 444|555 666|
+
+'''二，FS与OFS'''
+
+1，FS指定列分割符
+
+1. [zhangy@localhost test]$ echo "111|222|333"|awk '{print $1}'
+
+ 1. 111|222|333
+ 1. [zhangy@localhost test]$ echo "111|222|333"|awk 'BEGIN{FS="|"}{print $1}'
+ 1. 111
+
+2，FS也可以用正则
+
+1. [zhangy@localhost test]$ echo "111||222|333"|awk 'BEGIN{FS="[|]+"}{print $1}'
+
+ 1. 111
+
+3，FS为空的时候
+
+ 1. [zhangy@localhost test]$ echo "111|222|333"|awk 'BEGIN{FS=""}{NF++;print $0}'
+
+ 1. 1 1 1 | 2 2 2 | 3 3 3
+
+'''当FS为空的时候，awk会把一行中的每个字符，当成一列来处理'''。
+
+4，RS被设定成非\n时，\n会成FS分割符中的一个
+
+1. [zhangy@localhost test]$ cat test1
+
+ 1. 111 222
+ 1. 333 444
+ 1. 555 666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{RS="444";}{print $2,$3}' test1
+ 1. 222 333
+ 1. 666
+
+'''222和333之间是有一个\n的，当RS设定成444后，222和333被认定成同一行的二列了，其实按常规思想是二行的一列才对'''。
+
+5，OFS列输出分隔符
+
+1. [zhangy@localhost test]$ awk 'BEGIN{OFS="|";}{print $1,$2}' test1
+
+ 1. 111|222
+ 1. 333|444
+ 1. 555|666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{OFS="|";}{print $1 OFS $2}' test1
+ 1. 111|222
+ 1. 333|444
+ 1. 555|666
+
+'''test1只有二列，如果100列，都写出来太麻烦了吧。'''
+
+1. [zhangy@localhost test]$ awk 'BEGIN{OFS="|";}{print $0}' test1
+
+ 1. 111 222
+ 1. 333 444
+ 1. 555 666
+ 1. [zhangy@localhost test]$ awk 'BEGIN{OFS="|";}{NF=NF;print $0}' test1
+ 1. 111|222
+ 1. 333|444
+ 1. 555|666

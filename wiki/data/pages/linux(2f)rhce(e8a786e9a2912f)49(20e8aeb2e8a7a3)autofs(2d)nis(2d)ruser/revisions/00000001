@@ -1,0 +1,53 @@
+== 章节3 课时 49 讲解autofs-nis-ruser ==
+----
+{{{
+fstab 系统不启动，不能正常运行
+root帐号,mount -a 
+
+autofs 
+/etc/auto.master /etc/auto.misc
+
+mount /dev/cdrom /misc/cd
+
+vi /etc/auto.master
+   /misc /etc/auto.misc
+vi /etc/auto.misc
+cd  -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom //cd自动加载。/misc目录下cd目录（一访问cd目录自动加载光盘),nosuid,nodev控制权限
+service autofs restart
+chkconfig autofs on
+
+例子：
+linux   -ro,soft,intr ftp.example.org:/pub/linux
+removable   -fstype=ext2  :/dev/hdd
+boot    -fstype=ext2    :/dev/hda1
+floppy  -fstype=auto    :/dev/fd0
+floppy  -fstype=ext2    :/dev/fd0
+ser1    -ro,soft,intr   192.168.0.1:/var/abc  //intr可以中断方式，soft软方式，ro只读,nfs
+
+
+服务器192.168.0.1：
+useradd -d /rhome/shrek shrek //添加用户设置主目录/rhome/shrek
+vi /etc/exports
+ /rhome 192.168.0.0/255.255.255.0(rw,async)
+service nfs restart
+
+另一台服务器 192.168.0.2
+vi /etc/auto.master
+ /rhome /etc/auto.rhome
+vi /etc/auto.rhome
+ *  -rw,intr,soft   192.168.0.1:/rhome/&
+ 
+ service autofs restart
+ chkconfig autofs on
+登录192.168.0.2时，自动挂载192.168.0.1 机器上的用户主目录
+ 
+ls /rhome/shrek
+以上配置相当于以下挂载语句
+ mount -o intr,soft,rw 192.168.0.1:/rhome/shrek /rhome/shrek
+ 
+ rpm -ql autfs
+ 查看文档
+ man 5 autfs //查看第五号文档
+ 
+
+ }}}

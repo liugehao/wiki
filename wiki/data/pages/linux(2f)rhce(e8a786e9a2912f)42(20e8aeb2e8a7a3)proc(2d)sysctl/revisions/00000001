@@ -1,0 +1,73 @@
+== 章节3 课时 42 讲解proc-sysctl ==
+
+proc 目录,是内存中的数值,没有来源，只是入口，到内存结构中，
+proc目录下只是一个接口，不可更改，以文件形式存在，
+
+mount -t proc　none /aaa
+
+/proc/sys 下文件多数可更改，少数不能改
+更改之后马上第一次，但下次启动无效（因为更改的是内存的值），这里只提供入口方法
+
+
+#echo 1 > icmp_echo_ignore_all　//使机器不可ping 
+
+#sysctl -w net.ipv4.icmp_echo_ignore_all=1 //功能同上
+
+#cat /proc/sys/net/ipv4/net.ipv4.icmp_echo_ignore_all
+1
+#vi /etc/sysctl.conf
+net.ipv4.icmp_echo_ignore_all=1
+#sysctl -p //把sysctl.conf中的重写一遍到proc/sys
+
+#sysctl -a //把所有可更改的内核参数显示出来
+ip_forward //数据包转发
+
+#sysctl -p -f /tmp/a.sysctl //把a.sysctl刷到内核
+
+常用参数
+ * file-max 打开最大数量文件参数
+ * shm 共享内存　sysctl-a |grep shm
+ * syn 防止洪水攻击设置
+ * icmp ,broadcasts 广播包
+   ping 192.168.0.0 -b 
+ * cat /proc/meminfo 查看内存
+   free 命令
+ * vmstat 机器慢时，查看原因
+   (vmsat 1 10 间隔一秒做１０次，系统状态显示出来)
+   si so(swap in out)　如果占用率高，内存不足，频繁使用swap
+   bi bo block设备读出与入，free 内存占用，cpu用户进程占用cpu
+   us 用户空间进程
+   sy 占用高，可能网络受攻击
+   id 剩余cpu
+   wa IO wait ，cpu等待硬盘寻道完成找到数据
+ * top <,>上现翻页
+ * ps aux
+   a 显示所有终端上的程序
+   u 显示项目更多
+   x 后面守护进程全部显示
+     带方括号的，内核线程
+ * ps pstree top,都是查/proc下的进程，数字文件夹为内核进程id 
+ * df 查看磁盘使用 
+ * hostname 也是设置在内核中(/proc)
+   hostname abc 更改hostname
+   vi /etc/sysconfig/network //永久更改
+ * uname -a 
+   32bit pae内核支持大内存不好，
+   4ＧＢ支持大于于 安装 kernel-PAE内核（软件内存管理）
+   大内存安装x86_64 硬件支持大内存，支持比３２位好
+ * uptime 负载（top中也可看到）
+   1,5,15分钟等待执行任务的个数
+   数字不应该多于cpu个数
+ * swapon 打开swap
+   swapon -s 可以看所有swap空间使用情况
+ * pmap 查看内存情况
+   pmap -p 1 调用了哪些库，占用内存情况
+ * du -s /etc 看一个目录多大
+   du -sh /etc ／／h以Ｍ,Ｇ,Ｋ方式显示
+ * fdisk -l
+ * iostat 1 10 //要安装sysstat这个包，查看每个硬盘io情况  
+ * cat /proc/bus/pci/devices 查看所有的ＰＣＩ设备
+   lspic 同上
+ * lsusb 查看现在有哪些ＵＳＢ设备连接，都是去/proc找相应文件
+ * dmidecode 查看BIOS返回的信息（硬件版本号等）
+ * x86info 查看cpu标准特性,比如指令集的支持等

@@ -1,0 +1,115 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnLinking
+##master-date:2006-08-05 11:15:54
+#acl -All:write Default
+#format wiki
+#language zh
+
+{{{#!wiki caution
+
+this page is outdated and needs to be fixed
+
+}}}
+
+= 参考 =
+||'''链接形式'''          ||'''语法'''                         ||'''备注'''                      ||
+|| 内部链接               ||`WikiName`                         ||Camel``Case page name           ||
+|| 内部自由链接           ||`["Page"]` or `["free link"]`      ||可配置函数                      ||
+|| 内部子页面链接         ||`/SubPage` or `["/Sub page"]`      ||相对于上一级页面                ||
+|| 外部链接               ||`http://example.net`               ||                                ||
+|| 内部命名链接           ||`[:HelpContents:Contents of the Help]`||                             ||
+|| 外部命名链接           ||`[http://example.net example site]`||                                ||
+|| 本地图片(附件)         ||`attachment:graphics.png`          ||图片内嵌显示                    ||
+|| 外部图片               ||`http://example.net/image.png`     ||显示目标图片                    ||
+|| 外部和内部图片         || `<<ImageLink(image,target[,width=w[,height=h]][,alt=alt])>>` ||显示的图片链接到URL或者维基页面 ||
+||内部链接作用域          ||{{{WikiName``s}}}                  ||两个反引号                      ||
+||消除内部链接            ||`!WikiName`                        ||可配置函数                      ||
+
+= 解释与示例 =
+== 任意格式名称 ==
+如果你{{{["像这样"]}}}用方括号括起任意的字符，那就会使它成为一个页面名称。该功能可以在 MoinMoin 中用于特殊用途（就好比列出某些物品的列表，例如：你收藏的CD辑，你可以使用它们本来的名称来创建页名），或者你需要创建非西方字符编码页名称的时候也会用到。(注: 可以使用这样的方式定义中文链接)
+
+## /!\ '''此功能是通过 `allow_extended_names` 来启动的可选功能，所以它可能无法正常工作（未启用）！'''
+
+== 超链接和内嵌图片 ==
+在文本中插入外部引用<<FootNote(相对于外部链接，是内部的，自动生成的["维基链接名"]链接。)>>有几种方法：
+ * 直接插入超链接；如果超链接以图像文件扩展名（"{{{.gif}}}", "{{{.jpg}}}" or "{{{.png}}}"）结束，该链接将被自动转化为图像标记。
+ * 方括号链接。
+ * InterWiki 链接。
+ * 电子邮件地址。
+
+如果你在普通的文本中键入超链接，探测什么是超链接的一部分和什么不是链接的组成不分是很困难的。有四种方法可以强制指明一个超链接的结尾：
+ * 在超链接的末尾加一个空格。
+ * 使用 Wiki:SixSingleQuotes 特殊形式。
+ * 将超链接放入双引号之间。
+ * 使用方括号链接语法。
+
+支持的链接类型为：`http`，`https`，`ftp`，`nntp`，`news`，`mailto`，`telnet`，`irc`以及`file`。您的wiki管理员可以通过扩展{{{url_schemas}}}变量来增加对其他类型链接的支持（参见[[帮助-系统设置]]）。
+
+除了标准的链接类型，MoinMoin 还提供了一些特殊的链接类型：`wiki`，`attachment`，`inline`以及`drawing`。"`wiki`" 表示一个[[维基链]]（InterWiki），所以 `MoinMoin:首页` 和 `wiki:MoinMoin:首页` 是等价的；一般情况下你可以选择比较短的形式来书写，当使用方括号形式链接的时候 "`wiki`" 将变得比较重要，因为该方式需要明确链接的类型。另外三种类型是用于文件附件的，将在[[帮助-操作/附件]]中对它们进行解释。
+
+关于更多标记形式，请参见[[帮助-编辑]]。关于如何链接子页面，请参见[[帮助-编辑/子网页]]。
+
+如要在页面内插入锚点，需要使用[[帮助-宏|宏]]''Anchor'': `<<Anchor(anchorname)>>`，这里的"anchorname" 是锚点的标识。要在同一个维基网页上指向这个锚点，请使用`[#anchorname]`或者`[#anchorname 显示文字]`。要链接其他维基网页上的锚点，请使用`[:PageName#anchorname]`或者`[:PageName#anchorname:显示文字]`，这里的"Page``Name"是其他页面的名字，"anchorname"是该页面上锚点的标识。
+
+有时候希望指向维基内部的链接显示出不同的链接文字。如果你使用了InterWiki链接``Self``，那么链接之前会出现一个InterWiki图标，这会误导浏览者，因为这个链接根本没有离开当前的维基。你可以使用`[:WikiPage:显示文字]`来生成这样的链接，这不会产生InterWiki链接。
+
+/!\ 有些维基上，指向RecentChanges的链接和指向[[recentchanges]]的链接是相同的页面. Windows和Mac OS X 操作系统尤其如此，因为它们一般不对大小写敏感。
+
+<<FootNote>>
+
+=== 避免自动链接 ===
+
+要避免类似于Page``Name的单词自动变成链接，请使用{{{Page``Name}}}。
+
+你也可以在WikiName之前加入一个感叹号来消除链接，比如`!WikiName`。可以通过配置选项 `bang_meta = False` 取消这个功能。
+
+要避免超链接自动形成链接形式，请使用{{{`http://...`}}} 或者 `{{{http://...}}}`。
+
+
+=== 示例 ===
+{{{
+ * http://moinmoin.wikiwikiweb.de/
+ * [http://moinmoin.wikiwikiweb.de/]
+ * [http://moinmoin.wikiwikiweb.de/ MoinMoin 的主页]
+ * http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png
+ * [http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png]
+ * [http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png  moinmoin.png]
+ * [http:/wiki/common/moinmoin.png] 部分链接
+ * InterWiki
+  * Self:InterWiki
+  * MeatBall:InterWiki
+  * wiki:MeatBall/InterWiki
+  * [wiki:MeatBall/InterWiki]
+  * [wiki:MeatBall/InterWiki MeatBall上的维基链（InterWiki）页面]
+ * user@example.com
+ * mailto:user@example.com?subject=test
+ * [:InterWiki:本维基的维基链页面]
+ * [#anchorname 链接到本页面上的锚点]
+ * [:OtherPage#anchorname:链接到本维基内其他页面上的锚点，显示不同文字]
+}}} 
+
+=== 显示 ===
+
+ * http://moinmoin.wikiwikiweb.de/
+ * [[http://moinmoin.wikiwikiweb.de/]]
+ * [[http://moinmoin.wikiwikiweb.de/|MoinMoin 的主页]]
+ * {{http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png}}
+ * [[http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png]]
+ * [[http://moinmoin.wikiwikiweb.de/wiki/common/moinmoin.png|moinmoin.png]]
+ * [[http:/wiki/common/moinmoin.png]] 部分链接
+ * InterWiki
+  * InterWiki
+  * MeatBall:InterWiki
+  * MeatBall:InterWiki
+  * MeatBall:InterWiki
+  * [[MeatBall:InterWiki|MeatBall上的维基链（InterWiki）页面]]
+ * user@example.com
+ * mailto:user@example.com?subject=test
+ * [[InterWiki|本维基的维基链页面]]
+ * [[#anchorname|链接到本页面上的锚点]]
+ * [[OtherPage#anchorname|链接到本维基内其他页面上的锚点，显示不同文字]]
+
+
+此页的英文版本：HelpOnLinking

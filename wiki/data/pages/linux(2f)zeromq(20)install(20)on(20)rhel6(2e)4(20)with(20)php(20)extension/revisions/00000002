@@ -1,0 +1,80 @@
+Describe linux/zeromq install on rhel6.4 with php extension here.
+----
+
+=== zeromq install on rhel 6.4 x64 ===
+{{{
+cd /dev/yum.repo.d/
+wget http://download.opensuse.org/repositories/home:/fengshuo:/zeromq/CentOS_CentOS-6/home:fengshuo:zeromq.repo
+yum update
+yum install zeromq
+yum install zeromq-devel # for development
+}}}
+
+=== php zermoq extension ===
+{{{
+yum install libxml2-devel
+
+wget http://cn2.php.net/distributions/php-5.5.4.tar.bz2
+tar zxf php-5.5.4.tar.bz2
+./configure
+pear channel-discover pear.zero.mq
+pecl install pear.zero.mq/zmq-beta
+
+cp ./php.ini-development /usr/local/lib/php.ini
+vi /usr/local/lib/php.ini
+}}}
+
+#add line  and save
+{{{
+extension=zmq.so
+}}}
+
+=== php_zeromq_server.php ===
+[[attachment:php_zeromq_server.php]]
+{{{#!highlight php
+<?php
+$context = new ZMQContext(1);
+// Socket to talk to clients
+$responder = new ZMQSocket($context, ZMQ::SOCKET_REP);
+$responder->bind("tcp://*:5555");
+while(true) {
+// Wait for next request from client
+$request = $responder->recv();
+//printf ("Received request: [%s]\n", $request);
+// Do some 'work'
+// Send reply back to client
+$responder->send("World");
+}
+}}}
+
+=== php_zeromq_client.php ===
+[[attachment:php_zeromq_client.php]]
+{{{#!highlight php
+<?php
+//count exec time
+function time1(){
+    list($a, $b) = explode(" ", microtime());
+    return ((float)$a + (float)$b);
+}
+$start_time = time1();
+$count = 100000;
+$sucesscount = 0;
+$context = new ZMQContext();
+ //  Socket to talk to server
+echo "Connecting to hello world server...\n";
+$requester = new ZMQSocket($context, ZMQ::SOCKET_REQ);
+$requester->connect("tcp://localhost:5555");
+for($request_nbr = 0; $request_nbr != $count; $request_nbr++) {
+    //printf ("Sending request %d...\n", $request_nbr);
+    $requester->send("Hello");
+    $reply = $requester->recv();
+    if($reply == "World")$sucesscount ++;
+    //printf ("Received reply %d: [%s]\n", $request_nbr, $reply);
+}
+echo "\nseconds for send {$count} times 'hello' :" .  (time1()- $start_time)."\n sucesscount:{$sucesscount}";
+}}}
+
+=== test ===
+{{{
+php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php &
+}}}

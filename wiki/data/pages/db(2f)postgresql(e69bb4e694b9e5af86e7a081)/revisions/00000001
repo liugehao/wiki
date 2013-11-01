@@ -1,0 +1,12 @@
+= postgresql更改密码 =
+----
+{{{
+su - postgres
+psql
+alter role postgres password 'new password';
+}}}
+
+???下面的不好用???
+{{{
+alter user postgres with password 'new password'
+}}}

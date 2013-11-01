@@ -1,0 +1,31 @@
+== 章节3 课时 40 讲解initrd-usb-scsi ==
+
+initrd = init ram disk 
+
+grub 把kernel initrd从硬盘读出，放入内存，把引导交给kernel, 载入驱动initrd
+
+mkinitrd --with usb_mod
+
+
+root@x201i:/lib/modules/3.2.0-4-amd64/kernel/drivers/usb/host#
+3种usb2.0驱动uhci ehci ohci
+
+加载驱动，写入到a.img镜像，内核版本号文件
+mkinitrd --with uhci-hck --with usb-storage --with sd_mod --with scsi_mod /boot/a.img 2.6.18-194.el
+
+更改 /boot/grub/grub.conf
+加载a.img 替换原来initrd...img
+
+initrd..img 是个压缩包，里面有很多文件
+
+.ko　文件　内核模块
+
+
+默认编译内核驱动模块
+./configure
+make
+make install
+如果没有make install 脚本　，
+cp xxxx.ko /lib/modules/2.6.18...el5(版本号)/kernel/drivers/scsi(如果是scsi驱动)
+然后执行　depmod ,扫描所有的内核驱动模块，放在注册文件中
+然后可以运行mkinitrd　--with，重新生成内核驱动

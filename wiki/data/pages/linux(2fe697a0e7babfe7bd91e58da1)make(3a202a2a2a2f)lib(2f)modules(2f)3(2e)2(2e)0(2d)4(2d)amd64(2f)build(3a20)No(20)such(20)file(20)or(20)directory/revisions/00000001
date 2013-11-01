@@ -1,0 +1,24 @@
+Describe linux/无线网卡make: ***/lib/modules/3.2.0-4-amd64/build: No such file or directory here.
+----
+安装tp-link wn722n usb无线网卡时出错
+{{{
+wget wireless.kernel.org/download/compat-wireless-2.6/compat-wireless-2.6.tar.bz2
+tar -jxf compat*.bz2
+cd compat-wireless-2012-05-10
+apt-get install gcc make
+ ./scripts/driver-select ath9k_htc 
+make
+}}}
+出错：
+{{{
+root@x201i:/home/l/software/tp-link_wn722n/compat-wireless-2012-05-10# make
+make -C /lib/modules/3.2.0-4-amd64/build M=/home/l/software/tp-link_wn722n/compat-wireless-2012-05-10 modules
+make: *** /lib/modules/3.2.0-4-amd64/build: No such file or directory.  Stop.
+make: *** [modules] Error 2
+}}}
+
+{{{
+
+apt-get install linux-headers-3.2.0-4-amd64
+}}}
+[[linux/debian安装wn722n(ath9k-htc)]]

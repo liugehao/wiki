@@ -1,0 +1,9 @@
+Describe linux/AB 测试nginx socket: Too many open files (24) here.
+----
+su - root
+
+ulimit -n 35768(要改的数)
+
+PS:这应该不难理解，linux是通过文件来对设备进行管理，ulimit -n是设置同时打开文件的最大数值，ab中每一个连接打开一个设备文件，所以设置这个值就可以解决了。
+
+详细配置：[[linux/sysctl.conf limits.conf]]

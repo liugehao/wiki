@@ -1,0 +1,68 @@
+Describe python/virtualenv pip 技巧 here.
+
+== virtualenv ==
+这里是导言吗？
+用过Python的同学，肯定会对Python及程序的版本之间经常更换的api感到痛苦不以。就拿我折腾的Django来说吧，公司服务器上跑的是Django1.3、同事也是用1.3开发，但是因为我是新来，一个
+pip install django
+下去，就是1.4.2。好了，你自己写的Django Project自然没有问题，自己本地测试也没有问题。但是要和其他人交流的时候就蛋疼了，因为你的1.4.2跑不了1.3的程序……当然，这时，你可以选择卸载自己本地的Django，换成1.3，等你要重新测试自己的Django，怎么样，扯着蛋了吧。为了解决以上问题，virtualenv横空出世了。
+正文
+为了解决以上蛋疼问题，我们需要安装virtualenv。
+{{{
+sudo pip install virtualenv
+}}}
+安装好了以后，就可以在任何目录下新建一个virtual-environment（我更喜欢叫：盗梦空间），当然一般我习惯在项目的边上创建一个$project_name-env。例如：
+{{{
+virtualenv demo-env
+}}}
+这下，只需要
+{{{
+source demo-env/bin/activate
+}}}
+就可以激活这个虚拟环境了。如下图所示：
+
+注意到括号里的(demo-env)了没？对，我们已经进入了第一层梦境demo-env。
+回到导言里的问题，我们需要在这里建立一个使用django1.3的环境，不让它干扰我们的本地环境。
+
+{{{
+pip install Django==1.3
+}}}
+就可以了，然后在里面运行别人的Django程序，没有问题！装很多python程序，没有问题，这些都不会干扰你的本地环境，放心破坏吧！
+
+== PIP ==
+刚才的virtualenv的介绍里已经说了pip的安装命令了。但你当pip只是个安装工具的话，那就大错特错了。pip还有一个更重要的功能——冻结当前梦境开发环境版本（freeze）。
+{{{
+(env1)l@x201i:~/pyproject/yuer$ pip freeze
+argparse==1.2.1
+bottle==0.11.6
+bottle-sqlalchemy==0.4
+psycopg2==2.5.1
+wsgiref==0.1.2
+
+}}}
+看到了刚才安装的django 1.3了没有？这就是我们目前的生产环境，把这输出结果写到requirement.txt里，别的程序猿们就知道你的程序至少在这个环境下可以跑，这时他们拿着requirement.txt，新建个virtualenv，
+{{{
+pip install -r requirement.txt
+}}}
+就可以运行你的程序了。
+pip加速安装
+通过pip安装程序，还可以用git和svn的方式，具体操作网上也有。但是对于懒人来说，直接用pip是最好不过的了，但是，有时这会很慢！！！慢到你抓狂。当然，和apt-get一样，pip也可以换源，或者叫添加镜像。
+新建一个~/.pip/pip.conf，往里面写入
+{{{
+[global]
+index-url=http://e.pypi.python.org/simple
+timeout = 30
+require-virtualenv = true
+download-cache = /tmp
+
+[install]
+use-mirrors = true
+mirrors =
+
+http://d.pypi.python.org
+
+http://b.pypi.python.org
+
+http://c.pypi.python.org
+
+}}}
+下载应该就会像飞了一样，配置文件过于清晰，所以我也不用多说了吧 ：）

@@ -1,0 +1,30 @@
+== 章节3 课时 37 讲解cups-setenforcing ==
+
+cups 通用unix打印系统，响应本机或者外界打印
+
+chkconfig --list cups 查看是否运行服务
+
+chkconfig --list |grep cups 
+
+lpd 老式打印系统，
+
+cups 有收费版本，为了兼容lpd，有服务cpus-ltd
+
+system-config-printer 配置打印机
+
+system-config--....
+{{{
+seLinux 
+#getenforce
+Permissive
+#setenforce 0 //半闭selinux
+#getenforce
+Enforcing
+
+//永久关闭selinux
+vi /etc/selinux/config
+SELINUX=disabled
+
+}}}
+
+LANG= 回车，语言改成默认英文

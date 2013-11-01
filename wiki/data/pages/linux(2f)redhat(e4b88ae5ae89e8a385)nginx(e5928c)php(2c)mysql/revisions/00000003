@@ -1,0 +1,450 @@
+## page was renamed from linux/redhat上安装nginx和php
+= redhat上安装nginx和php,mysql =
+支持oracle,先安装下面２个包，从oracle网站下载相应版本。
+{{{
+oracle-instantclient-basic-10.2.0.3-1.x86_64.rpm
+oracle-instantclient-devel-10.2.0.3-1.x86_64.rpm 
+}}}
+
+
+
+http://vladgh.com/blog/install-nginx-and-php-533-php-fpm-mysql-and-apc
+{{{
+yum install pcre-devel
+./configure    --prefix=/opt/nginx    --conf-path=/etc/nginx/nginx.conf    --pid-path=/var/run/nginx.pid    --lock-path=/var/lock/nginx.lock    --http-log-path=/var/log/nginx/access.log    --error-log-path=/var/log/nginx/error.log    --http-client-body-temp-path=/var/lib/nginx/body    --http-proxy-temp-path=/var/lib/nginx/proxy    --http-fastcgi-temp-path=/var/lib/nginx/fastcgi    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi    --http-scgi-temp-path=/var/lib/nginx/scgi    --with-http_ssl_module    --with-http_stub_status_module    --user=apache    --group=apache    --without-mail_pop3_module    --without-mail_imap_module    --without-mail_smtp_module
+
+
+
+yum install libXpm-devel libX11-devel libXdmcp-devel xorg-x11-proto-devel mesa-ligGl-devel freetype-devel
+
+./configure    --prefix=/opt/php5    --with-config-file-path=/opt/php5/etc    --with-config-file-scan-dir=/opt/php5/etc/conf.d    --with-curl    --with-pear    --with-gd    --with-jpeg-dir    --with-png-dir    --with-zlib    --with-xpm-dir    --with-freetype-dir    --with-mhash    --with-mysql        --with-pdo-mysql    --with-openssl    --with-xmlrpc    --with-xsl    --with-bz2    --with-gettext    --with-fpm-user=apache    --with-fpm-group=apache    --disable-debug    --enable-fpm    --enable-exif    --enable-wddx    --enable-zip    --enable-bcmath    --enable-calendar    --enable-ftp    --enable-mbstring    --enable-soap    --enable-sockets    --enable-sqlite-utf8    --enable-shmop    --enable-dba    --enable-sysvsem    --enable-sysvshm    --enable-sysvmsg --with-apxs2=/usr/local/apache/bin/apxs  --with-oci8=instantclient,/usr/lib/oracle/11.2/client64/lib --with-iconv
+
+rpm -ivh libX11-devel-1.0.3-11.el5.x86_64.rpm \
+libXpm-devel-3.5.5-3.x86_64.rpm \
+libX11-devel-1.0.3-11.el5.x86_64.rpm \
+libXdmcp-devel-1.0.1-2.1.x86_64.rpm \
+xorg-x11-proto-devel-7.1-13.el5.x86_64.rpm \
+mesa-libGL-devel-6.5.1-7.8.el5.x86_64.rpm \
+freetype-devel-2.2.1-21.el5_3.x86_64.rpm
+
+
+
+
+
+mkdir /var/lib/nginx/
+mkdir /var/lib/nginx/body
+vi /etc/nginx/nginx.conf
+#user  root;
+worker_processes  4;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  4096;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+    client_max_body_size 20m;
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    #keepalive_timeout  650;
+    #client_header_buffer_size 128k;
+    #large_client_header_buffers 4 128k;
+
+    gzip  on;
+    include /opt/nginx/sites-enabled/*;
+
+    # HTTPS server
+    #
+    #server {
+    #    listen       443;
+    #    server_name  localhost;
+
+    #    ssl                  on;
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_timeout  5m;
+
+    #    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    #    ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+    #    ssl_prefer_server_ciphers   on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+}
+
+mkdir /opt/nginx/sites-enabled
+vi /opt/nginx/sites-enabled/default
+server {
+    listen       80 default;
+    #charset koi8-r;
+
+    access_log  /var/log/nginx/default.access.log;
+    error_log  /var/log/nginx/default.error.log;
+
+    root   /var/www;
+    index  index.php index.html index.htm login.php;
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 503 504  /50x.html;
+    location = /50x.html {
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~* .(jpg|gif|png|js|css)$ {
+        if (-f $request_filename) {
+            expires max;
+            break;
+        }
+     }
+    location ~ \.php$ {
+
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 500;
+        include        fastcgi_params;
+    }
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+
+
+
+
+
+vi /etc/init.d/nginx
+#!/bin/sh
+#
+# nginx - this script starts and stops the nginx daemin
+#
+# chkconfig:   - 85 15 
+# description:  Nginx is an HTTP(S) server, HTTP(S) reverse \
+#               proxy and IMAP/POP3 proxy server
+# processname: nginx
+# config:      /opt/nginx/conf/nginx.conf
+# pidfile:     /opt/nginx/logs/nginx.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+nginx="/opt/nginx/sbin/nginx"
+prog=$(basename $nginx)
+
+NGINX_CONF_FILE="/etc/nginx/nginx.conf "
+
+lockfile=/var/run/nginx.pid
+
+start() {
+    [ -x $nginx ] || exit 5
+    [ -f $NGINX_CONF_FILE ] || exit 6
+    echo -n $"Starting $prog: "
+    daemon $nginx -c $NGINX_CONF_FILE
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $prog -QUIT
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
+}
+
+restart() {
+    configtest || return $?
+    stop
+    start
+}
+
+reload() {
+    configtest || return $?
+    echo -n $"Reloading $prog: "
+    killproc $nginx -HUP
+    RETVAL=$?
+    echo
+}
+
+force_reload() {
+    restart
+}
+
+configtest() {
+  $nginx -t -c $NGINX_CONF_FILE
+}
+
+rh_status() {
+    status $prog
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+case "$1" in
+    start)
+        rh_status_q && exit 0
+        $1
+        ;;
+    stop)
+        rh_status_q || exit 0
+        $1
+        ;;
+    restart|configtest)
+        $1
+        ;;
+    reload)
+        rh_status_q || exit 7
+        $1
+        ;;
+    force-reload)
+        force_reload
+        ;;
+    status)
+        rh_status
+        ;;
+    condrestart|try-restart)
+        rh_status_q || exit 0
+            ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
+        exit 2
+esac
+
+
+
+chmod +x /etc/init.d/nginx
+/sbin/chkconfig nginx on
+/sbin/chkconfig --list nginx
+
+
+php-fpm.conf 中的pid设置必须打开和脚本中的一致
+vi /etc/init.d/php-fpm
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          php-fpm
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts php-fpm
+# Description:       starts the PHP FastCGI Process Manager daemon
+### END INIT INFO
+
+prefix=/opt/php5
+exec_prefix=${prefix}
+
+php_fpm_BIN=${exec_prefix}/sbin/php-fpm
+php_fpm_CONF=${prefix}/etc/php-fpm.conf
+php_fpm_PID=/var/run/php-fpm.pid
+
+
+php_opts="--fpm-config $php_fpm_CONF"
+
+
+wait_for_pid () {
+	try=0
+
+	while test $try -lt 35 ; do
+
+		case "$1" in
+			'created')
+			if [ -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+
+			'removed')
+			if [ ! -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+		esac
+
+		echo -n .
+		try=`expr $try + 1`
+		sleep 1
+
+	done
+
+}
+
+case "$1" in
+	start)
+		echo -n "Starting php-fpm "
+
+		$php_fpm_BIN $php_opts
+
+		if [ "$?" != 0 ] ; then
+			echo " failed"
+			exit 1
+		fi
+
+		wait_for_pid created $php_fpm_PID
+
+		if [ -n "$try" ] ; then
+			echo " failed"
+			exit 1
+		else
+			echo " done"
+		fi
+	;;
+
+	stop)
+		echo -n "Gracefully shutting down php-fpm "
+
+		if [ ! -r $php_fpm_PID ] ; then
+			echo "warning, no pid file found - php-fpm is not running ?"
+			exit 1
+		fi
+
+		kill -QUIT `cat $php_fpm_PID`
+
+		wait_for_pid removed $php_fpm_PID
+
+		if [ -n "$try" ] ; then
+			echo " failed. Use force-exit"
+			exit 1
+		else
+			echo " done"
+		fi
+	;;
+
+	force-quit)
+		echo -n "Terminating php-fpm "
+
+		if [ ! -r $php_fpm_PID ] ; then
+			echo "warning, no pid file found - php-fpm is not running ?"
+			exit 1
+		fi
+
+		kill -TERM `cat $php_fpm_PID`
+
+		wait_for_pid removed $php_fpm_PID
+
+		if [ -n "$try" ] ; then
+			echo " failed"
+			exit 1
+		else
+			echo " done"
+		fi
+	;;
+
+	restart)
+		$0 stop
+		$0 start
+	;;
+
+	reload)
+
+		echo -n "Reload service php-fpm "
+
+		if [ ! -r $php_fpm_PID ] ; then
+			echo "warning, no pid file found - php-fpm is not running ?"
+			exit 1
+		fi
+
+		kill -USR2 `cat $php_fpm_PID`
+
+		echo " done"
+	;;
+
+	*)
+		echo "Usage: $0 {start|stop|force-quit|restart|reload}"
+		exit 1
+	;;
+
+esac
+
+
+修改php-fpm.conf.default 
+pid = /var/run/php-fpm.pid
+
+
+
+
+4、编译安装cmakewget http://www.cmake.org/files/v2.8/cmake-2.8.4.tar.gz
+#tar xvzf cmake-2.8.4.tar.gz
+#cd cmake-2.8.4
+# ./configure
+#make&make install
+
+cd mysql-5.5.11
+cmake . -DCMAKE_INSTALL_PREFIX=/opt/mysql55/  -DMYSQL_DATADIR=/opt/mysql55/data  -DWITH_INNOBASE_STORAGE_ENGINE=1  -DMYSQL_TCP_PORT=3306  -DMYSQL_UNIX_ADDR=/var/run/mysql.sock  -DMYSQL_USER=mysql  -DWITH_DEBUG=0
+
+make && make install 
+
+# cd /usr/local/mysql55
+# chown -R mysql .
+# chgrp -R mysql .
+#cp support-files/my-huge.cnf /etc/my.cnf
+
+#vi /etc/my.cnf
+将数据目录和套接字文件修改为实际值.
+
+# scripts/mysql_install_db –user=mysql
+# chown -R root .
+# chown -R mysql data
+
+以下命令启动mysql
+# bin/mysqld_safe –user=mysql &
+以下命令测试
+# bin/mysqladmin version
+# bin/mysqladmin variables
+# chkconfig –add mysqld
+
+到这里就完成了,现在重启电脑进入终端测试
+# cd /usr/local/mysql
+# bin/mysqlshow
+如果可以看到数据说明mysql已经自启动了,现在你可以在终端使用
+service mysqld stop来停止mysql服务
+使用service mysqld start 来启动mysql服务
+}}}

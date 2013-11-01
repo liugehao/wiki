@@ -1,0 +1,14 @@
+= 安装php扩展apc =
+----
+
+
+下载apc http://pecl.php.net/package/apc
+
+解包,进入目录
+{{{
+/opt/php5/bin/phpize
+./configure --with-php-config=/opt/php5/bin/php-config --enable-apc
+make 
+make install
+cp /path/APC-3.1.13/apc.php /var/www
+}}}

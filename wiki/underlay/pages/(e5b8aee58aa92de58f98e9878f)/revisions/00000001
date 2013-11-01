@@ -1,0 +1,70 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnVariables
+##master-date:2006-06-15 13:01:00
+#acl -All:write Default
+#format wiki
+#language zh
+== 帮助-变量 ==
+
+=== 预定义的变量 ===
+
+保存页面时，下列变量会被替换。注意在预览时他们不会被替换!
+
+|| 变量           || 描述                                               || 例子 ||
+|| @``PAGE@     || 页面的名称 (可用于模板页面)                      || HelpOnPageCreation ||
+|| @``DATE@     || 以系统格式表示的当前日期                           || <<Date(2004-08-30T06:38:05Z)>> ||
+|| @``TIME@     || 以用户格式表示的单前日期和时间                     || <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``USERNAME@ || 用户名 (或者他的IP/domain)                     || TheAnarcat ||
+|| @``USER@     || 签名  "-- loginname"                          || -- TheAnarcat ||
+|| @``SIG@      || 带有日期的签名  "-- loginname date time"       || -- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``MAILTO@   || 花式mailto: 以用户数据作链接                      || 无 - 在公共站点上，最好使用 Mail``To 宏 ||
+
+
+== 扩展变量 ==
+
+你可以使用 Home``Page``Name/My``Dict 来扩展这些变量，只需在那里写入一个含有变量名和值的 Wiki``Dict 即可。例如，
+{{{
+ VAR1:: substitution 1
+ VAR2:: substitution 2
+}}}
+
+如果你建立一个以`.*Dict`结尾的页面 (请看 page_dict_regex)，你可以将一些变量设置为特定值:
+ var1:: value1
+ var2:: value2
+ var3:: value3
+
+在编辑窗口中，上述变量赋值的格式如下:
+{{{
+ var1:: value1
+ var2:: value2
+ var3:: value3
+}}}
+
+开头的空格和 '::' 之后的空格必不可少。
+
+== 获取变量值 ==
+
+=== 当每个页面刷新时 ===
+
+你可以使用`GetVal` 宏获取变量值:
+
+{{{
+<<GetVal(WikiDict,var1)>> <<GetVal(WikiDict,var2)>> <<GetVal(WikiDict,var3)>>
+}}}
+
+输出为:
+
+<<GetVal(WikiDict,var1)>> <<GetVal(WikiDict,var2)>> <<GetVal(WikiDict,var3)>>
+
+=== 当保存页面时 ===
+
+如果变量设置在 !UserName/!MyDict 中 (!UserName 当然要适当地替换)，你可以在保存任何含有@var1@, @var2@等变量的页面时获得变量值，而无需使用{{{GetVal}}}宏。 
+
+----
+
+/!\ 注意 dict 页面中的数据是被缓存的，并不是每次获取数据时都会处理 dict 页面。在CGI模式下，变量值从pickle中获取，在长运行过程中，pickle只被加载一次，然后变量值从内存中获取。
+
+/!\ 注意保存模板页面以及预览页面是'''不会'''展开变量。在其他情况下，变量的替换在页面的任何部分都会被处理，包括代码显示，注释，处理指示以及其他你可能认为被排除在外的页面的任何"特殊"区域。请看[[帮助-模板]]了解模板的更多信息。
+
+此页的英文版本: HelpOnVariables

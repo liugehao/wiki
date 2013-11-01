@@ -1,0 +1,74 @@
+在这里详述 linux/moinmoin安装。
+
+{{{
+# Install nginx
+add-apt-repository ppa:nginx/stable
+aptitude update
+aptitude install nginx
+
+# Install and activate python virtualenv
+pip install virtualenv
+mkdir -p /srv/www/moin
+virtualenv /srv/www/moin/pythonenv
+source /srv/www/moin/pythonenv/bin/activate
+
+# Download and install moinmoin:
+cd /tmp
+wget http://static.moinmo.in/files/moin-1.9.4.tar.gz
+tar zxvf moin-1.9.4.tar.gz
+cd moin-1.9.4
+python setup.py install
+
+# Deactivate python virtualenv
+deactivate
+
+# Copy wiki to /srv/www/moin
+cp -r ./wiki /srv/www/moin/
+
+# Copy configs to wiki root directory
+cd /srv/www/moin/wiki/
+cp config/wikiconfig.py ./
+cp server/moin.wsgi ./
+
+vi /srv/www/moin/wiki/moin.wsgi
+
+sys.path.insert(0, '/srv/www/moin/pythonenv/lib/python2.7/site-packages/')
+sys.path.insert(0, '/srv/www/moin/wiki/')
+
+chown www-data:www-data -R /srv/www/moin
+chmod o-rwx -R /srv/www/moin
+
+aptitude install uwsgi uwsgi-plugin-python
+
+
+vi /srv/www/moin/uwsgi.xml
+
+<uwsgi>
+    <uid>www-data</uid>
+    <gid>www-data</gid>
+    <plugin>python</plugin>
+    <socket>/srv/www/moin/moin.sock</socket>
+    <wsgi-file>/srv/www/moin/wiki/moin.wsgi</wsgi-file>
+    <limit-as>256</limit-as>
+    <processes>8</processes>
+    <memory-report/>
+    <vhost/>
+    <no-site/>
+</uwsgi>
+
+
+server {
+    server_name wiki.example.com;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:///srv/www/moin/moin.sock;
+        uwsgi_modifier1 30;
+    }
+}
+
+
+}}}

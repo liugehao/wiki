@@ -1,0 +1,12 @@
+= bashrc 生效 =
+
+在配置bashrc文件后，如果想使其立即生效，可以不用采用登出的方法，而直接键入下列命令即可
+
+{{{
+#source ./.bashrc
+
+}}}
+
+
+----
+CategoryLinux CategoryBash

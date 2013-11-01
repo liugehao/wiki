@@ -1,0 +1,9 @@
+= ubuntu 12.10中add-apt-repository的软件包 =
+----
+ubuntu 12.10 中add-apt-repository已经不在python-software-properties包中了。
+
+它在　software-properties-common中
+
+{{{
+sudo aptitude install software-properties-common
+}}}

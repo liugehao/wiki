@@ -1,0 +1,70 @@
+= python webkit scrapy =
+----
+ubuntu apt-get 安装pythonwebkit,jswebkit
+{{{
+apt-get install python-webkit jswebkit
+}}}
+在scrapy的settings.py中加入：
+{{{#!highlight python
+#which spider should use WEBKIT
+WEBKIT_DOWNLOADER=['jxydt']
+DOWNLOADER_MIDDLEWARES = {
+'jx.dowloader.WebkitDownloader': 543,
+}
+ 
+import os
+os.environ["DISPLAY"] = ":0"
+}}}
+dowloader.py
+{{{#!highlight python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from scrapy.http import Request, FormRequest, HtmlResponse
+ 
+import gtk
+import webkit
+import jswebkit
+import settings
+ 
+class WebkitDownloader( object ):
+    def process_request( self, request, spider ):
+        if spider.name in settings.WEBKIT_DOWNLOADER:
+            if( type(request) is not FormRequest ):
+                webview = webkit.WebView()
+                webview.connect( 'load-finished', lambda v,f: gtk.main_quit() )
+                webview.load_uri( request.url )
+                gtk.main()
+                webview.execute_script("ShowMeResult();")
+                js = jswebkit.JSContext( webview.get_main_frame().get_global_context() )
+                renderedBody = str( js.EvaluateScript( 'document.body.innerHTML' ) )
+                #print renderedBody
+                return HtmlResponse( request.url, body=renderedBody )
+}}}
+爬虫
+{{{#!highlight python
+from scrapy.selector import HtmlXPathSelector
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from jx.items import JxItem
+
+class JxydtSpider(CrawlSpider):
+    name = 'jxydt'
+    allowed_domains = ['jxydt.net.cn']
+    start_urls = ['http://www.jxydt.net.cn/']
+
+    rules = (
+        Rule(SgmlLinkExtractor(allow=r'Itemssdafdsfa1/'), callback='parse_item', follow=False),
+    )
+
+    def parse(self, response):
+        hxs = HtmlXPathSelector(response)
+        i = JxItem()
+        i['name'] = hxs.select('//*[@id="defen"]/center[1]/b/font/text()').extract()[0]
+        return i
+}}}
+启动 Xvfb (假设DISPLAY=:0) Xvfb (用于非Xwindow环境)
+
+要与settings.py中的DISPLAY对应（本例中是:0)。
+{{{
+scrapy crawl jxydt
+}}}

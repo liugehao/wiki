@@ -1,0 +1,36 @@
+== 章节3 课时 34 screen文本控制台的窗口操作 ==
+
+相当于nohup 后台运行，不会因为连接断开而中断运行。但是可以恢复执行状态，切换多个进程。
+
+screen 命令　　执行运行时间长的命令，以防止网络中断　
+
+screen bash
+
+screen 直接打开screen
+
+
+pstree |grep screen
+
+screen -r  恢复到原来的任务
+
+screen -dr 终止连接退回bash　，但不中止程序运行.
+
+screen -r pid 多个screen时恢复到指定的screen
+
+在screen中，CTRL+a ，开一个新的screen窗体。
+
+screen -x 恢复到最近断开的screen
+
+pstree | grep -A2 -B2 screen 查看screen以及上下２行
+
+在一个screen中，CTRL+a 按下n，在多个窗口中切换
+
+在screen中，CTRL+a　c 打开新窗口
+
+screen CTRL +a d 退出screen 用-r 恢复
+
+
+在screen中bash中exit后，如此此screen中没有了窗口，　-r 连接不上，可以杀掉此screen进程
+
+screen CTRL+a \ 后　屏幕没反应，过一会回到最初bash （杀掉了自己）　
+

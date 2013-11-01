@@ -1,0 +1,96 @@
+Describe linux/gwan g-wan key value store here.
+----
+add data: http://localhost:8080/?kv4.c&act=a
+
+get data:  http://localhost:8080/?kv4.c&body=999999
+
+首先定义结构　record_t　指针，分配内存空间，存储数据，添加进k/v存储。
+
+{{{#!highlight c
+
+
+#include "gwan.h" // G-WAN exported functions
+#include <malloc.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+
+typedef struct record_s // this is a user-defined 'record' structure
+{
+   char *name;  // the Key(name) is a field of the Value(name, email)
+   char *email; 
+   u32   id;      
+} record_t;
+
+
+int main(int argc, char *argv[])
+{
+    xbuf_t *reply = get_reply(argv);
+    char *act="", *body="";
+    get_arg("act=", &act, argc, argv);
+
+    get_arg("body=", &body, argc, argv);
+
+    xbuf_xcat(reply, "------ %s --- %s", act, body);
+
+    kv_t **vhost_ptr = (kv_t**)get_env(argv, US_VHOST_DATA), //persistent ptr
+    *forum_store = 0; //convenience pointer (var->m instead of (*var)->m)
+
+    if (vhost_ptr && !*vhost_ptr)
+    {
+        *vhost_ptr = (kv_t*)malloc(sizeof(kv_t));
+        //threads and posts stored here
+
+        kv_init(*vhost_ptr, "users", 1024, 0, 0, 0);
+    } 
+    forum_store = *vhost_ptr;
+
+    if ( *act == 'a' )
+    {
+        kv_item item;
+        record_t *record ;
+        u32 i = 1;
+        char str[15];
+        char email[15];
+        while(i< 15000000)
+        {
+            //sprintf(str, "%d", i);
+            //sprintf(email, "%d", i * 3);
+            record = (record_t*)malloc(sizeof(record_t));
+            record->name = (char*)strdup(str);
+            record->email = (char*)strdup(email);
+            record->id = i;
+            item.key = (char *)&record->id;
+            item.klen = sizeof(u32);//sizeof(str) - 1; // faster
+            item.val = (char*)record;
+            item.flags = 0;
+            kv_add(forum_store, &item); // add an entry to the name_dat Store index
+
+            i++;
+        }
+    }
+    xbuf_xcat(reply, "<br><b>Count</b>: %d key(s) in KV store<br>",
+    forum_store->nbr_items); 
+
+    u32 val=atof(body);
+    //printf("%s, %d\n", body, val);
+    record_t *record = (record_t*)kv_get(forum_store, (char*)&val, sizeof(u32));
+
+    xbuf_xcat(reply,
+            "<br>record with id = '%u' name's field: \"%s\", email: %s <br>",
+            val,
+            record ? record->name : "<font color=#ff4040>not found</font>",
+	record ? record->email : "<font color=#ff4040>not found</font>");
+
+    //char n[7] = "100010";
+    //record_t *p = (record_t *)kv_get(forum_store, body, 6); // 0:not found
+    //      xbuf_xcat(reply, "<br>pierre's email address: %s <br>", p->email); 
+
+    return 200; // return an HTTP code (200:'OK')
+}
+
+
+
+
+}}}

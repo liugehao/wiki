@@ -1,0 +1,61 @@
+== 章节3 课时 36 讲解cron-anacron ==
+atd 简单的，轻量级，可控性小
+chkconfig adt off 关闭
+//只执行一次的任务，使用率不高
+#at 12:00 
+>echo '12' 
+>CTRL +d
+
+
+crond 
+ * crond
+  cron 
+  i. 用户执行 crontab -e
+    /var/spool/cron 保存用户cron配置,文件名为
+    crontab -u shrek -e //root 可更改其它用户cron
+    crontab -e 
+    前五个位置放时间：分钟　小时　日　月　周　命令
+    1 5 * * * dump -3uf /tmp/boot.dump /boot //每天５点１分执行备份,或者使用tar。'''dump可以识别分区　dump -3uf /tmp/boot.dump /dev/boot. dump 可以增量备份'''
+    0uf 完整备份文件　3uf 增量备份　4uf 对３的增量　
+    每天都做3uf 差量备份，
+    
+    0uf 1uf 2uf 3uf 4uf 每一天的差量备份，恢复时间增加（按顺序一个一个恢复）。
+    
+    31 5 * * 7 dump -0uf /mnt/data.`date +%y%m`.dump /boot 
+    每周日备份一次完整的/boot到磁盘，最后每个月保留一个备份文件
+    
+    1 */2 * * 1-5 cat lover.txt |mail -s "i miss you again `date`"
+    周一到周五，每隔２小时发一封邮件
+    
+  i. 系统执行 /etc/cron.d/*
+    /etc/cron. 下保存系统cron
+    /etc/crontab 配置文件
+    {{{
+    01 *    * * *   root    run-parts /etc/cron.hourly
+    #root 以root用户执行，run-parts 执行/etc/cron.hourly目录下所有文件
+    #要考虑权限问题，可执行，用户环境变量等
+    
+    25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+    47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+    52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+    }}}
+    sysstat 包，安装后可用每１０分钟执行　可用sar查看系统状态
+    vi /etc/cron.d/sa-update　-1 //每几个小时，或者每几分钟执行
+    // 该文件权限一定要 -rw-------　600,非周期执行
+    10 4 * * * root /usr/share/spamassassin/sa-update.cron 2>&1 |tee a /var/sa-update.log
+    //每天４点１０分执行脚本
+    
+    /etc/cron.d/daily 用得最多的
+    tmpwatch 删除tmp目录下１０天没用的
+    logrotate 截断日志
+    mlocate　执行updatedb
+    
+    which ls 查找可执行文件
+    locate shadow 查找所有文件　，正则表达式 -r 'shadow$'
+    updatedb 把所有文件查找一遍存储文件
+    
+       //system
+ * anacrond
+  会把以前没有执行的计划补回来,比如每点４点执行的程序，因为每天晚上关机，所以开机会补
+  
+  

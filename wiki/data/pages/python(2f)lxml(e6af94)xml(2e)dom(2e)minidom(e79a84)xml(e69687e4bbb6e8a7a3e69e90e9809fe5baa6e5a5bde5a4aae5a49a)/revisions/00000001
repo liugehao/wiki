@@ -1,0 +1,58 @@
+= python/lxml比xml.dom.minidom的xml文件解析速度好太多 =
+----
+第一个链接monidom解析要十几二十秒，第二个８Ｇ内存机器用守内存硬盘狂闪，机器基本停止响应。
+==== 而换成lxml，解析第二个，只要一秒。  ====
+{{{#!highlight python
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import urllib2
+import base64
+import cStringIO
+import zipfile
+from lxml import etree
+s = cStringIO.StringIO()
+#http://192.168.1.31:82/ydec/service/datareport/getOmOrgList.action?datatype=xml&hucite=test&starttime=2012-09-04%2014:06:21&endtime=2012-09-04%2015:06:42&data=wwww&validation=b0bd9f607d355e38f1e35d662992f2b0
+s.write(base64.b64decode(urllib2.urlopen('http://192.168.1.31:82/ydec/service/datareport/getAcOperatorList.action?datatype=xml&hucite=test&validation=b0bd9f607d355e38f1e35d662992f2b0&data=wwww').read()))
+s.seek(0)
+
+
+z = zipfile.ZipFile(s)
+s = cStringIO.StringIO()
+s.write(z.open('zip').read())
+s.seek(0)
+
+xf = etree.parse(s)
+columns = []
+for n in xf.find('datas'):
+    print '-' * 80
+    values = []
+    if not len(columns):
+        for nc in n:
+            columns.append(nc.tag)
+    for nc in n:
+        values.append(nc.text and nc.text  or '')
+        
+    for i in range(len(columns)):
+        print "%20s\t%s" % (columns[i],values[i])
+    break
+
+""" 
+from xml.dom.minidom import parse, parseString
+xf = parse(s) #性能与lxml比超慢，甚至内存不够无法完成(lxml瞬间完成)
+columns = []
+for n in xf.documentElement.getElementsByTagName('datas')[0].childNodes:
+    print '-' * 80
+    values = []
+    if not len(columns):
+        for nc in n.childNodes:
+            columns.append(nc.nodeName)
+    for nc in n.childNodes:
+        values.append(nc.firstChild and nc.firstChild.toxml()  or '')
+        
+    for i in range(len(columns)):
+        print "%20s\t%s" % (columns[i],values[i])
+    break
+"""
+
+}}}

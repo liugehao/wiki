@@ -1,0 +1,31 @@
+Describe linux/sysctl.conf limits.conf here.
+----
+vi /etc/security/limits.conf
+{{{
+* soft    nproc   2047
+* hard    nproc   16384
+* soft    nofile  65536
+* hard    nofile  65536
+* soft   memlock  unlimited
+* hard   memlock  unlimited
+}}}
+
+----
+
+vi /etc/sysctl.conf
+{{{
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+fs.file-max = 6815744
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 262144
+net.core.wmem_default = 262144
+net.core.rmem_max = 4194304
+net.core.wmem_max = 1048576
+fs.aio-max-nr = 1048576
+
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_syncookies = 1
+}}}

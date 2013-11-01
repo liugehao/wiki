@@ -1,0 +1,128 @@
+Describe linux/rhel/redhat笔记 here.
+----
+echo "aaa" > tty1　＃输出内容到tty终端
+
+vi /etc/inittab
+id:3:initdefault  #3默认不启动xwindow,5开机启动xwindow
+
+1:2345:respawn:/sbin/ningetty tty1 #tty终端数量
+
+
+===9 10 课时，系统命令初步 ===
+linux一切皆文件，硬件也抽象成文件形式
+{{{
+cd ~abc 进入abc家目录
+touch a 更改文件时间，如果没有文件则创建
+touch /tmp/{a,b} 创建a,b２个文件
+stat a 查看文件a的时间
+pws 显示当前路径
+ls -F 增加标记。可执行文件加/,可执行文件加*...
+alias ls='ls --color=tty'　增加颜色
+unalias 取消别名
+source .bashrc 升效
+cp -r 文件夹
+rm -i 交互模式，是否删除
+rm -r 删除文件夹
+rm -rf 删除文件夹和文件不询问
+rm -f 不问是否删除
+cp -r 文件夹
+rmdir 删除空文件夹
+pstree 查看进程树
+
+hostname 查看、更改主机名（不保存，下次重启变回原来主机名）
+/etc/ssconfig/network 主机名信息
+
+ifconfig 查看更改ＩＰ
+ifconfig eth0 192.168.1.12 (不永久第一次)
+vi /etc/sysconfig/network-scraipts/ifcfg-eth0 网络配置文件
+
+netconfig 改文件，自动改ifconfig的配置到配置文件，再service network restart 升效
+
+file /bin/ls ＃file 文件名，查看文件类型
+file p.img
+p.img: Linux rev 1.0 ext4 filesystem data, UUID=c6f89be8-9267-4953-b4f5-ff368c58d9c4 (extents) (huge files)
+
+使用cifs 需要先安装 cifs-utils包
+
+mount /dev/cdrom /mnt
+mount -t iso9660 /dev/cdrom /mnt
+mount -t cifs //192.168.0.1/tools /mnt
+mount -t cifs -o username=administrator //192.168.0.1/tools /mnt #win share
+mount 192.168.0.254:/var/ftp/pub /mnt #nfs linux共享。nfs速度快
+
+cat /dev/cdrom >a.iso 做镜象文件
+mount -t iso9660 -o loop a.iso /mnt #loop 虚拟成一个回环设备
+
+
+ls -l 不是文件实际占的大小，文件夹４Ｋ，
+du -s 看文件夹大小，汇总　-h 显示k,m,g
+
+shutdown -h 16:00 ＃１６点关机
+init 0 关闭服务，然后调halt -p -f 断电。自己用机器，直接init 0关机
+
+shutdown -r now　会调用
+init 6
+
+
+ 
+}}}
+
+=== １６课时　文本处理及正则表达式　===
+ * 命令 cat tail head less more
+{{{
+tail -f 监视文件，如果文件发生变化，显示发生变化
+cut -d: -f1 /etc/passwd //　-d以冒号为分隔符，　-f显示第一列
+cut -d: -f1 /etc/passwd |grep root //显示第一列，并且第一列中包括root的行
+cut -d: -f7 /etc/passwd　显示shell
+}}}
+
+ * grep 
+-v 反向选择
+-R 对目录下文件和子文件夹下文件进行筛选
+-l 只显示文件外
+''正则表达式用单引号
+-c 显示行号
+-A2　显示上下文中下面２行
+-B2　显示上下文中上面２行
+ * grep 正则
+||. ||表示任何一个字符 ||
+||.＊ ||表示０个或者任意个字符 ||
+||^a ||a开头的行 ||
+||a$ ||表示以a结束的行 ||
+||<good ||表示以good开头的单词 ||
+||sh> ||表示以sh结尾的单词 ||
+||[abc] ||表示当前位置是a,b或者c ||
+||[^abc] ||表示除a b c以外的字符 ||
+||a*||空,a,aa,aaa,.... ||
+||a? ||表示０个或者一个a ||
+||a+ ||表示a,aa,aaa,... ||
+||a\{n\} ||表示n个a ||
+
+  grep '.\{40,\}' /usr/share/dict/words　取超过４０字符的单词
+  grep '^i.\{18\}n$' /usr/share/dict/words 查看i18n的单词
+  查看配置文件，过滤注释行和空行
+  grep -v '^#' /etc/nginx/nginx.conf | grep -v '^$'
+  cut -d: -f2-4 -c1-5 冒号分隔符，显示第二到第四段,1-5个字符
+  -r 反向排序
+
+ * locate -r '' 正则查找文件
+
+ * sort 
+  -r 反向排序
+  -t:　以冒号分隔符
+  -n 数字形式排序
+  +3 从第二列开始排　//-k3
+  sort -t: -k3nr /etc/passwd   按第三列数字方式排倒序
+
+ * wc 统计
+  -l 行
+  -w 单词
+  -c 字符
+
+ * uniq 统计
+  cut -d: -f7 /etc/passwd |sort | uniq 第７列排序后　distinct。-c 统计行数
+
+ * diff 文件对比,可以生成patch文件
+  patch -p0 < pathch文件　// -p 级别
+
+

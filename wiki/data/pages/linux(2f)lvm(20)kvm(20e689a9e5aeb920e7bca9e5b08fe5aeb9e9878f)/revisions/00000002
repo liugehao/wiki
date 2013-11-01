@@ -1,0 +1,46 @@
+在这里详述 linux/lvm kvm 扩容 缩小容量。也适用于host lvm卷调整
+
+== raw 镜像文件增加容量  ==
+{{{
+qemu-img info xp_4_test.disk01 #查看文件信息
+qemu-img resize xp_4_test.disk01 +150M //更改大小
+}}}
+在windows中，查看磁盘，会出现空余容量。
+==== win2003中 ====
+　[[windows2003 extpart.exe更改C盘容量]] 无损增加容量，win2008 diskpart.exe
+==== linux lvm ====
+用free空间建立一个分区，把分区加入卷组，把卷组空间加入lvm。如果是／分区,用光盘引导进入rescue模式
+{{{
+fdisk /dev/vda
+n //建立分区
+p //主分区
+lvm pvcreate /dev/vda4 //建立物理卷
+lvm vgextend vg卷组名 /dev/vda4 //把物理卷添加到已有卷组
+e2fsck -f /dev/vg卷组名/逻辑卷
+lvm lvextend /dev/vg卷组名/逻辑卷 +1G //增加逻辑卷容量
+resize2fs /dev/vg卷组名/逻辑卷
+}}}
+
+
+== 缩小容量lvm逻辑卷容量 ==
+ 1. 在使用lvm命令前加lvm： lvm pvscan; lvm vgscan; lvm lvscan;
+ 1. 此时找不到/dev/VolGroup00/LogVol00（lvscan 逻辑卷状态不是ACTIVE时），需用lvm lvchange -ay /dev/VolGroup00/LogVol00 加载
+ 1. 在缩减之前需检测缩减之后的容量是否足够：e2fsck -f /dev/VolGroup00/LogVol00
+ 1. 调整文件系统 resize2fs /dev/VolGroup00/LogVol00 【newsize】
+ 1. 再调整逻辑卷 lvm lvreduce -L 【newsize】 /dev/VolGroup00/LogVol00
+ 1. fsck.ext4 /dev/VolGroup00/LogVol00
+ 1. '''缩小容量查看vg ＰＥ，lv ＬＥ，blocks是否足够，否则会出错。'''
+
+== 增加容量lvm逻辑卷容量 ==
+ 1. 在使用lvm命令前加lvm： lvm pvscan; lvm vgscan; lvm lvscan;
+ 1. 此时找不到/dev/VolGroup00/LogVol00（lvscan 逻辑卷状态不是ACTIVE时），需用lvm lvchange -ay /dev/VolGroup00/LogVol00 加载
+ 1. 在缩减之前需检测缩减之后的容量是否足够：e2fsck -f /dev/VolGroup00/LogVol00
+ 1. 调整文件系统  lvm lvextend -L +1G /dev/VolGroup00/LogVol00
+ 1. 再调整逻辑卷 resize2fs /dev/VolGroup00/LogVol00
+ 1. fsck.ext4 /dev/VolGroup00/LogVol00
+
+
+== 根分区调整 ==
+ 1. 通过安装光盘进入rescue模式。
+ 1. 询问是否加载根分区时，选择skip。
+ 1. 参考上面增减

@@ -1,0 +1,9 @@
+Describe linux/apache ab 测试 here.
+----
+{{{
+sudo apt-get install apache2-utils
+
+ab -n 10000 -c 500 http://www.baidu.com/
+-c 并发用户数
+-n 请求总数
+}}}

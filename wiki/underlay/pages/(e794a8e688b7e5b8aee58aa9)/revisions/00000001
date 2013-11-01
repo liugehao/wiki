@@ -1,0 +1,25 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpForUsers
+##master-date:2010-11-10T05:05:43Z
+#acl -All:write Default
+#format wiki
+#language zh
+= 用户帮助 =
+
+本帮助页面是对新用户有用的帮助页面的列表。
+
+ * [[帮助-Moin维基语法]] - MoinMoin 维基语法快速预览
+ * [[帮助-新手入门]] - 维基新手入门
+ * [[帮助-编辑]] - 如何编辑一个页面
+ * [[帮助-图片]] - 如何插入和放置图片
+ * [[帮助-导航]] - 解释页面中的导航元素
+ * [[帮助-搜索]] - 解释搜索功能
+ * [[帮助-新建网页]] - 如何创建一个新页面
+ * [[帮助-登录]] - 如何让维基接纳你
+ * [[帮助-模板]] - 如何使用页面模板
+ * [[帮助-用户设置]] -  如何自定义自己的设置
+ * [[帮助-操作]] - 作用于某个页面或整个站点的工具
+ * [[帮助-订阅]] - 如何订阅或取消订阅某个页面
+
+此页的英文版本：HelpForUsers

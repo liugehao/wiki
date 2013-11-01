@@ -1,0 +1,40 @@
+== 章节3 课时 38 讲解grub-grub-troubleshooting ==
+
+开机过程
+BIOS-->Bootloader --> Kernel--> init --> service --> login --> bash
+
+智能手机
+Bootloader(bios+bootloader)->Kernel->
+
+window xp bootloader ntldr
+boot.ini 引导多个windows
+
+ sector 512byte
+ 446 MBR
+  64 DPT
+   2 55AA
+   
+ /boot/grub/stage1 512byte　//出问题，硬盘不可引导
+ /boot/grub/stage1_5_ext3 　　//出问题，屏幕出到“GRUB ”无反应，或者屏幕不停刷gurb
+ 上面２个已经写入硬盘最前面
+ /boot/grub/stage2 写在分区里，不可删除，如果删除系统无法启动
+ 
+ ／boot/grub/grub.conf 如果手工编译grub的话文件名为：1stmenu
+ 
+''' 修复'''
+stage1 stage1_5出问题
+grub-install /dev/sda
+
+stage5出问题　，光盘启动　linux rescue
+chroot /mnt/sysimage //默认要分区挂载位置
+rpm -ivh grub....
+
+
+grub.conf(1stmenu)找不到,
+grub>  //手动方式引导
+
+
+
+
+
+ 

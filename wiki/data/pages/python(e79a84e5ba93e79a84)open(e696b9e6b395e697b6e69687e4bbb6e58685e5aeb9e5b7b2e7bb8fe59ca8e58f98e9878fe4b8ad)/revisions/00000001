@@ -1,0 +1,12 @@
+在这里详述 python的库的open方法时文件内容已经在变量中。
+
+{{{#!highlight python
+
+import cStringIO
+f = cStringIO.StringIO()
+f.write('safsd')
+f.seek(0)
+
+with open(f, 'r') as b:
+  print b.read()
+}}}

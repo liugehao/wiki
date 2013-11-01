@@ -1,0 +1,50 @@
+= drupal安装模块上传错误 =
+----
+
+
+装好drupal7后，安装模块时出现了这样的错误：
+{{{
+
+WARNING: You are not using an encrypted connection, so your password will be sent in plain text. Learn more.
+
+To continue, provide your server connection details
+
+Connection method
+
+FTP CONNECTION SETTINGS
+.....
+
+etc
+}}}
+
+以前wordpress安装插件时也出现过类似的错误，我觉得可能是权限的问题，于是我给了整个module目录777的权限，再试，错误还在。
+
+于是上网找解决方法，发现有一个外国朋友的解决方案，如下：
+
+{{{
+
+I had the same problem with drupal 7rc4 on ubuntu and nginx and for me just were the permissions of drupal files
+
+I solved it as follows
+
+open a termninal and write
+
+sudo chown www-data:www-data -R /var/www/drupal
+
+where www-data is nginx user (maybe is the same with apache) and /var/www/drupal is the path drupal installation
+
+}}}
+
+他也出现了同样的错误，不过是在ubuntu的nginx环境下，我的是centos的nginx环境，解决方法是一样的。他的nginx用户名是www-data，drupal安装在/var/www/drupal下，于是打开终端输入：
+{{{
+sudo chown www-data:www-data -R /var/www/drupal
+}}}
+就可以了。
+
+我的nginx用户名是www,drupal安装在/home/wwwroot下面，在终端中输入的是：
+{{{
+chown www:www -R /home/wwwroot
+}}}
+然后再安装模块，就没有错误提示了。
+
+好像以前wordpress出现这样的问题也是这么解决的，记在这里备用吧。

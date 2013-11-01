@@ -1,0 +1,9 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnLanguages
+##master-date:2004-11-23 06:06:43
+#acl -All:write Default
+#format wiki
+#language zh
+
+<<Include(HelpOnLanguages)>>

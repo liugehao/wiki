@@ -1,0 +1,80 @@
+Describe .net/陈键的短信api调用 here.
+----
+== 余额查看 ==
+{{{#!highlight c#
+using System.Text;
+using System.Net;
+using System.IO;
+using System.Web;
+using System;
+namespace ConsoleApplication1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string linkUrl = "https://sms-api.luosimao.com/v1/status.json",
+                username = "api", 
+                password = "key-b2652cf62f07dd09a4d561dcb4528041"; //api key
+            
+
+            
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(linkUrl);
+            string auth = "Basic " + Convert.ToBase64String(System.Text.Encoding.Default.GetBytes(username + ":" + password));
+            request.Headers.Add("Authorization", auth);
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader respStream = new StreamReader(response.GetResponseStream());
+            System.Console.Write(respStream.ReadToEnd());
+            System.Console.Read();
+        }
+
+ 
+    }
+}
+
+}}}
+== 发送短信 ==
+{{{#!highlight C#
+using System.Net;
+using System.IO;
+using System.Text;
+using System;
+
+namespace ConsoleApplication1
+{
+    class Class1
+    {
+        static void Main(string[] args)
+        {
+            string mobile = "18602112511",
+                message = "Test send message use luosimao!【luosimao】",
+                username = "api",
+                password = "key-b2652cf62f07dd09a4d561dcb4528041",
+                url = "https://sms-api.luosimao.com/v1/send.json";
+  
+            byte[] byteArray = Encoding.UTF8.GetBytes("mobile=" + mobile + "&message=" + message);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(new Uri(url));
+            string auth = "Basic " + Convert.ToBase64String(System.Text.Encoding.Default.GetBytes(username + ":" + password));
+            webRequest.Headers.Add("Authorization", auth);
+            webRequest.Method = "POST";
+            webRequest.ContentType = "application/x-www-form-urlencoded";
+            webRequest.ContentLength = byteArray.Length;
+
+            Stream newStream = webRequest.GetRequestStream();
+            newStream.Write(byteArray, 0, byteArray.Length);
+            newStream.Close();
+
+
+            HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+            StreamReader php = new StreamReader(response.GetResponseStream(), Encoding.Default);
+            string Message = php.ReadToEnd();
+
+            System.Console.Write(Message);
+            System.Console.Read();
+        }
+
+    }
+}
+
+}}}

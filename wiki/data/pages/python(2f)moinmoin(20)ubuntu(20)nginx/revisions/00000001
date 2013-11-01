@@ -1,0 +1,36 @@
+= moinmoin ubuntu nginx =
+
+vi /etc/rc.local ，在exit 0 前面添加
+{{{
+uwsgi -x /www/moin/uwsgi.xml >/dev/null 2>&1 &
+}}}
+
+cat /etc/nginx/sites-enabled/wiki
+{{{
+server {
+    listen 4081;
+    access_log /dev/null;
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:///www/moin/moin.sock;
+        uwsgi_modifier1 30;
+    }
+}
+
+}}}
+
+cat moin/uwsgi.xml 
+{{{
+<uwsgi>
+    <uid>www-data</uid>
+    <gid>www-data</gid>
+    <plugin>python</plugin>
+    <socket>/www/moin/moin.sock</socket>
+    <wsgi-file>/www/moin/wiki/moin.wsgi</wsgi-file>
+    <limit-as>256</limit-as>
+    <processes>1</processes>
+    <memory-report/>
+    <vhost/>
+    <no-site/>
+</uwsgi>
+}}}

@@ -1,0 +1,118 @@
+= setting up Django with Scrapy =
+----
+Setting up Django with Scrapy
+
+This guide is about using Django, the most popular Python web framework, and Scrapy, the most popular Python scraping framework. Both of the frameworks are awesome, and they work very well standalone.
+
+Before you continue reading, make sure you are already beyond “Getting Started” stage for both the frameworks.
+
+At the end of the guide, what you can achieve is:
+
+Run scrapy, and auto save the crawled items in Django ORM
+1) Scrapy’s settings.py
+{{{#!highlight python
+def setup_django_env(path):
+	import imp, os
+	from django.core.management import setup_environ
+ 
+	f, filename, desc = imp.find_module('settings', [path])
+	project = imp.load_module('settings', f, filename, desc)       
+ 
+	setup_environ(project)
+ 
+	# Add django project to sys.path
+	import sys
+	sys.path.append(os.path.abspath(os.path.join(path, os.path.pardir)))
+ 
+setup_django_env('/path/to/django/myproject/myproject/')
+}}}
+2) Scrapy’s items.py
+{{{#!highlight python
+from scrapy.contrib_exp.djangoitem import DjangoItem
+from myapp.models import Poll
+ 
+class PollItem(DjangoItem):
+    django_model = Poll
+}}}
+3) Scrapy’s pipelines.py
+{{{#!highlight python
+from myapp.models import Poll
+ 
+class PollPipeline(object):
+ 
+    def process_item(self, item, spider):
+ 
+    	item.save()
+        return item
+}}}
+Done!
+
+That’s all to run scrapy and auto save the items to Django ORM. You can now run your regular
+{{{#!highlight bash
+scrapy crawl myspider
+}}}
+PS: This guide serves to be complete. It adds to a popular Stackoverflow answer, and completes the picture for Django 1.4, which Django adopts a new layout. And also provide the code for the experimental DjangoItem (rare!).
+
+
+
+
+
+== 另外一个 ==
+----
+{{{#!highlight python
+# # django-admin.py startproject djangoapp
+# # Create your django model: django startapp website
+# # Edit scrapy settings.py with method to point to Django environment
+# # Create a pipeline that accesses Django using the model.save() method
+
+***settings.py***
+
+import os
+ITEM_PIPELINES = ['myapp.pipelines.DjangoPipeline']
+
+# http://stackoverflow.com/questions/4271975/access-django-models-inside-of-scrapy
+def setup_django_env(path):
+    import imp, os
+    from django.core.management import setup_environ
+
+    f, filename, desc = imp.find_module('settings', [path])
+    project = imp.load_module('settings', f, filename, desc)       
+
+    setup_environ(project)
+
+
+current_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+setup_django_env(os.path.join(current_dir, '../djangoapp/')) #注意此处　djangoapp，不是project目录，应该'/djangoproject/djangoapp/'
+
+***pipelines.py***
+from djangoapp.websites.models import Website
+from django.db.utils import IntegrityError
+
+class DjangoPipeline(object):
+
+    def process_item(self, item, spider):
+        website = Website(link=item['link'][0],
+                created=datetime.datetime.now(),
+                )
+        try:
+          website.save()
+        except IntegrityError:
+          raise DropItem("Contains duplicate domain: %s" % item['link'][0])
+        return item
+
+***djangoapp model***
+
+from django.db import models
+
+class Website(models.Model):
+    link = models.CharField(max_length=200, unique=True)
+    created = models.DateTimeField('date created')
+
+    def __unicode__(self):
+            return u"%s" % self.link
+
+# Snippet imported from snippets.scrapy.org (which no longer works)
+# author: redtricycle
+# date  : Nov 27, 2011
+
+}}}

@@ -1,0 +1,23 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpContents
+##master-date:2010-08-26T11:50:08Z
+#acl -All:write Default
+#format wiki
+#language zh
+= 帮助目录 =
+
+欢迎使用 MoinMoin 。本页提供维基系统本身的使用帮助。
+
+如果你想对 MoinMoin 的语法有一个概览，请看[[帮助-Moin维基语法]]。如果你想要详细的介绍，请看[[维基教程]]。
+
+ * [[用户帮助]] - 针对 MoinMoin 维基新手的内容。
+ * [[帮助-系统管理]] - 如何配置和维护一个 MoinMoin 维基。
+ * [[帮助索引]] - 所有帮助网页的列表。
+
+(!) [[查找网页]]提供全文检索。
+
+----
+~-''如果发现帮助页面有错误，请在 MoinMoin:HelpErrata 中对该错误进行简要描述。请不要在 Moin''''''Master 以外的维基编辑和创建新的帮助网页（参见 MoinMaster:HelpContents ），因为 Moin''''''Master 中的网页会在维基引擎升级时覆盖其他网页。在 Moin''''''Master 中改动时请不要随意更改帮助网页的原有结构。在对帮助网页作出重大或大范围的修改时请先在邮件列表或 Moin''''''Moin 维基中讨论。''-~
+
+此页的英文版本：HelpContents

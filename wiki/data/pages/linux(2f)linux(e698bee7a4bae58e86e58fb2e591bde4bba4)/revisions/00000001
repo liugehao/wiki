@@ -1,0 +1,14 @@
+Describe linux/linux显示历史命令 here.
+----
+使用 HISTTIMEFORMAT 显示时间戳
+
+当你从命令行执行 history 命令后，通常只会显示已执行命令的序号和命令本身。如果你想要查看命令历史的时间戳，那么可以执行：
+{{{
+# export HISTTIMEFORMAT='%F %T '
+# history | more
+1 2008-08-05 19:02:39 service network restart
+2 2008-08-05 19:02:39 exit
+3 2008-08-05 19:02:39 id
+4 2008-08-05 19:02:39 cat /etc/redhat-release
+}}}
+注意：这个功能只能用在当 HISTTIMEFORMAT 这个环境变量被设置之后，之后的那些新执行的 bash 命令才会被打上正确的时间戳。在此之前的所有命令，都将会显示成设置 HISTTIMEFORMAT 变量的时间。

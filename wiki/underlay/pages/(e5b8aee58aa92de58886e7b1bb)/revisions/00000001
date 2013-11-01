@@ -1,0 +1,20 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnCategories
+##master-date:2006-05-01 12:59:00
+#acl -All:write Default
+#format wiki
+#language zh
+
+分类(categories)是一种重要的wiki概念。实现起来很简单：你只需要在页面上写上分类的名字就可以了。!MoinMoin甚至简化了这个操作：编辑页面时，你可以从分类列表中选定某个分类。顺便说一句，这个页面属于 CategoryCategory 分类。
+
+在某个分类的页面上，你可以描述这个分类的内容。如果想得到属于这个分类的所有页面的列表，你可以点击这个这个分类页面的标题，或者添加一个适当的宏命令(它可以列出页面)：
+
+ * `<<FullSearch(Category``Samples)>>` 可以列出分类 `CategorySamples` 中的所有页面
+ * `<<FullSearch(r:CategoryRecipes\b -r:CategoryCake\b)>>` 可以列出除了蛋糕以外的所有食谱 :-)
+ * 更多信息请看 [[帮助-搜索]]
+
+一般来说，分类被命名为 `Category``Something`。如果你想使用其他的模式，比如 `Catégorie``Gaffeur` (法语)， 那需要管理员根据用户语言更改设置 `page_category_regex`。请看[[帮助-系统设置]]。
+
+----
+CategoryCategory

@@ -1,0 +1,14 @@
+Describe linux/flash安装 here.
+----
+Installing using the plugin tar.gz:
+ 1. Unpack the plugin tar.gz and copy the files to the appropriate location.  
+ 1. Save the plugin tar.gz locally and note the location the file was saved to.
+ 1. Launch terminal and change directories to the location the file was saved to.
+ 1. Unpack the tar.gz file.  Once unpacked you will see the following:
+     libflashplayer.so
+     /usr
+ 1. Identify the location of the browser plugins directory, based on your Linux distribution and Firefox version
+ 1. Copy libflashplayer.so to the appropriate browser plugins directory.  At the prompt type:
+		+ cp libflashlayer.so <BrowserPluginsLocation>
+ 1. Copy the Flash Player Local Settings configurations files to the /usr directory.  At the prompt type:
+		+ sudo cp -r usr/* /usr

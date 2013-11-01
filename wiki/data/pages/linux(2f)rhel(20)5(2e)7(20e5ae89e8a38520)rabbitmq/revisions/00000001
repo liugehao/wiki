@@ -1,0 +1,64 @@
+Describe linux/rhel 5.7 安装 rabbitmq here.
+----
+=== 先安装erlang ===
+
+{{{
+yum list|grep curses
+rpm -ivh ncurses-devel-5.5-24.20060715.x86_64.rpm
+
+wget http://www.erlang.org/download/otp_src_R16B01.tar.gz
+tar zxf otp_src_R16B01.tar.gz 
+cd otp_src_R16B01
+./configure
+make && make install
+
+
+}}}
+=== 安装rabbitmq之前，设置环境变量 ===
+{{{
+export TARGET_DIR=/opt/rabbitmq
+export SBIN_DIR=/opt/rabbitmq/sbin
+export MAN_DIR=/opt/rabbitmq/man
+}}}
+
+=== 安装rabbitmq ===
+{{{
+rpm -ivh xmlto-0.0.18-13.1.x86_64.rpm docbook-style-xsl-1.69.1-5.1.noarch.rpm w3m-0.5.1-18.el5.x86_64.rpm passivetex-1.25-5.1.1.noarch.rpm tetex-3.0-33.13.el5.x86_64.rpm xmltex-20020625-8.noarch.rpm tetex-fonts-3.0-33.13.el5.x86_64.rpm tetex-latex-3.0-33.13.el5.x86_64.rpm netpbm-progs-10.35.58-8.el5.x86_64.rpm tetex-dvips-3.0-33.13.el5.x86_64.rpm dialog-1.0.20051107-1.2.2.x86_64.rpm psutils-1.17-26.1.x86_64.rpm 
+
+ wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5.tar.gz
+ tar zxf rabbitmq-server-3.1.5.tar.gz 
+cd rabbitmq-server-3.1.5
+make -j 8
+make install
+
+}}}
+
+最后还要设置一下日志与消息持久化目录，命令如下，其中的myuser是你当前的用户名
+{{{
+mkdir /var/log/rabbitmq  
+chown myuser /var/log/rabbitmq  
+mkdir /var/lib/rabbitmq  
+chown myuser /var/lib/rabbitmq  
+}}}
+
+
+=== 启动 ===
+{{{
+cd /opt/rabbitmq/sbin  
+./rabbitmq-server
+}}}
+为启动方便，可以把/opt/rabbitmq/sbin下的命令在/usr/local/bin下做一个链接，命令如下
+{{{
+   sudo ln -s /opt/rabbitmq/sbin/rabbitmq-server /usr/local/bin/rabbitmq-server
+}}}
+
+
+=== 错误 ===
+如果出现
+{{{
+ERROR: epmd error for host "yournewhostname": timeout (timed out establishing tcp connection) 
+}}}
+原因是, 主机名和ip不匹配了，需要更改/etc/hosts 
+{{{
+127.0.0.1 yournewhostname
+}}}

@@ -1,0 +1,8 @@
+Describe liugehao-工作-201308 here.
+----
+ i. gwan kev value store ,测试程序编写，测试 100%
+ i. weghttp 安装，测试g-wan
+ i. weihtp 与ab 测试结果对比
+ i. gwan key value store 减少扫描记录存储占用内存试验。存储每个快件的多条扫描记录压缩后的数据，占用内存大量减少，压缩比约6:1 100%
+ i. php 调用　gwan 的key value store 试验
+ i. gwan get post 上传最大数据量测试

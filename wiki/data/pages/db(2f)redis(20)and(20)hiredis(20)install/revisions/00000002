@@ -1,0 +1,79 @@
+== redis and hiredis install ==
+----
+=== Redis安装步骤 ===
+
+ 1. redis server安装
+    {{{
+    wget http://redis.googlecode.com/files/redis-2.4.6.tar.gz #下载文件
+    tar xzf redis-2.4.6.tar.gz
+    cd redis-2.4.6
+    make
+    cp src/redis-server src/redis-cli /usr/bin/ #方便在终端在任何地方直接运行
+    cp redis.conf /etc/
+    ufw allow 6379 #ubuntu下开启端口
+    }}}
+
+    修改/etc/redis.conf,让server以守护进程在后台执行。
+    daemonize yes
+
+
+ 1. 启动redis服务
+    {{{
+    redis-server /etc/redis.conf
+    }}}
+
+ 1. 检测redis服务是否正常启动
+    {{{
+    ps -ef | grep redis
+    }}}
+
+=== Hiredis install ===
+    Hiredis客户端下载地址：https://github.com/redis/hiredis
+
+    Hiredis安装步骤：
+    {{{
+    cd antirez-hiredis-3cc6a7f
+    make
+
+
+    mkdir /usr/lib/hiredis
+    cp libhiredis.so /usr/lib/hiredis #将动态连接库libhiredis.so至/usr/lib/hiredis
+    mkdir /usr/include/hiredis
+    cp hiredis.h /usr/include/hiredis
+    }}}
+    '''注意６４位系统的lib64,rehl6.4上按这方法报错未定义方法。'''
+
+
+
+=== 连接hiredis服务器 ===
+ 1. 连接
+    {{{
+    #include <stdio.h>
+    #include <hiredis/hiredis.h>
+
+
+    redisContext *conn = redisConnect("127.0.0.1", 6379); //redis server默认端口
+    if(conn->err){
+    printf("connection error: %s", conn->str);
+    }
+
+    }}}
+
+ 1. 发送命令至服务器 
+    {{{
+    redisReply *reply = redisCommand(conn, "set key value");
+    }}}
+
+ 1. 关闭Reply对象
+    {{{
+    freeReplyObject(reply);
+    }}}
+
+ 1. 关闭连接
+    {{{
+    redisFree(conn);
+    }}}
+
+
+
+'''具体一些其他的API可以看文件的README.md '''

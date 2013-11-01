@@ -1,0 +1,21 @@
+= python技巧 =
+----
+
+1到100中6出现了几次？
+{{{#!highlight python
+sum([str(x).count('6') for x in range(1,101) ])
+
+list(itertools.ifilter(lambda x: str(x).count('6') > 0, range(1,101)))
+}}}
+
+实现一个函数，给一个数，只能被5整除时返回字符a，只能被7整除时返回字符b,同时能被5和7整除时返回ab，要求尽量少的使用求余运算。
+{{{#!highlight python
+lambda n: n / 7 * 7 == n
+def fun(n)
+  s = []
+  if n / 5 * 5 == n:
+    s.append('a')
+  if n / 7 * 7 == n:
+    s.append('b')
+  return ''.join(s)
+}}}

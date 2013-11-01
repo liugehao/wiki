@@ -1,0 +1,22 @@
+= 在postgreSQL中使用正则表达式 =
+
+PostgreSQL真的很强，查询时候还可以用正则表达式。
+
+比如，要查询某个字段是以字母开头的纪录
+{{{#!highlight sql
+select * from dummy where inf1 ~* '^[A-Z]'
+}}}
+以数字开头的纪录
+{{{#!highlight sql
+select * from dummy where inf1 ~ '^[0-9]'
+}}}
+其他的很复杂的查询，只需修改操作符以及正则表达式。
+
+正则表达式的操作符使用方法如下：
+{{{
+~   匹配正则表达式，大小写相关。 例: 'thomas' ~ '.*thomas.*'  
+~*  匹配正则表达式，大小写无关。 例: 'thomas' ~* '.*Thomas.*'  
+!~  不匹配正则表达式，大小写相关。例: 'thomas' !~ '.*Thomas.*'  
+!~* 不匹配正则表达式，大小写无关。例: 'thomas' !~* '.*vadim.*'
+}}}
+如果不是特别复杂的条件，用LIKE(大小写相关)或者ILIKE(大小写无关)就可以实现。 

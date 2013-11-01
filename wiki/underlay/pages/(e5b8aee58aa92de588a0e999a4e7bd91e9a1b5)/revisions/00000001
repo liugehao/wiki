@@ -1,0 +1,17 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnPageDeletion
+##master-date:2006-01-02 07:26:57
+#acl -All:write Default
+#format wiki
+#language zh
+
+[[帮助目录]] > [[帮助-系统管理]] > [[帮助-删除网页]]
+
+== 如何删除网页 ==
+
+如果ACLs已经激活 (参考[[帮助-系统设置]]和[[帮助-其他/常见问题解答]]) 并授予权限，你可以使用{{{DeletePage}}}操作来删除网页。注意，''删除''的意思是为网页做一份备份，然后删除网页文件。这基本上类似于保存空网页 (系统并不允许这种操作)。
+
+这意味着你可以通过标准机制来获得已经删除的网页。 请参考[[帮助-其他/常见问题解答]]中"如何把网页恢复为旧版本"的条目。特别是如果你在 'GoTo' 对话框中输入网页名，就可以看到常规的网页创建材料，但是点击'页面信息'将展示旧版历史，除非网页已经被清除。
+
+(!) 只有在主机系统上通过shell操作才能完全删除网页 (包括备份、历史、附件) 且不可恢复。网页位于"`data/pages/<PageName>`" 目录，你也可以删除整个`<PageName>`目录 - 这样就完全无法恢复了。.

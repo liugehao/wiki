@@ -1,0 +1,34 @@
+== mysql mysqldump 导出 csv 数据 ==
+----
+ * 导出本地数据库数据到本地文件
+ {{{#!highlight sql
+  mysql -A service_db -h your_host -utest -ptest
+
+  mysql> select * from t_apps where created>'2012-07-02 00:00:00' into outfile /tmp/apps.csv
+ }}}
+
+
+
+ * 导出远程数据库数据到本地文件
+ {{{#!highlight sql
+  mysql -A service_db -h your_host -utest -ptest -ss -e "SELECT * from t_apps limit 300;" | sed 's/\t/","/g;s/^/"/;s/$/"/;s/\n//g' > apps.csv
+ }}}
+ (sed部分可略,尤其是处理包含汉字的数据时. 如果内容包含中文,可在select语句前加入set names utf8;)
+
+
+
+ * 使用mysqldump导出远程或本地数据到本地文件
+ {{{#!highlight sql
+  mysqldump -h your_host -utest -ptest -w "id<300" service_db t_apps > tt.sql
+ }}}
+ 如果只导数据加上 -t or --no-create- info ;
+
+ 如果只导结构加上 -d or --no-data;
+
+
+
+ * mysqldump不能指定导出的列,变通方法如下:
+ {{{#!highlight sql
+  mysql -u USERNAME --password=PASSWORD --database=DATABASE --execute='SELECT `FIELD`, `FIELD` FROM `TABLE` LIMIT 0, 10000 '  > file.csv
+ }}}
+ -X 导出xml

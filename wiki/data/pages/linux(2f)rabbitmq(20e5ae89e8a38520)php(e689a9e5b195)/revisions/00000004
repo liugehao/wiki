@@ -1,0 +1,36 @@
+Describe linux/rabbitmq 安装 php扩展 here.
+----
+{{{
+
+git clone https://github.com/alanxz/rabbitmq-c
+cd rabbitmq-c/
+git submodule init
+git submodule update
+
+yum install cmake
+
+mkdir build && cd build
+cmake ..
+cd .. && make && make install
+
+ wget http://pecl.php.net/get/amqp-1.2.0.tgz
+ tar zxf amqp-1.2.0.tgz
+ cd amqp-1.2.0
+ phpize
+ ./configure
+ make -j 8
+ make install
+
+}}}
+
+=== 开启web监控 ===
+{{{
+/opt/rabbitmq/sbin/rabbitmq-plugins enable rabbitmq_management
+}}}
+如果出错 ,创建/etc/rabbitmq目录及需要文件(touch),后再执行一次。
+
+
+=== 要安装amqp 的 C 库 rabbitmq-c，否则报下面的错误 ===
+{{{
+checking for amqp files in default path... not found
+}}}

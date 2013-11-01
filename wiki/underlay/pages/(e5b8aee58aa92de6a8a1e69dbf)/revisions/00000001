@@ -1,0 +1,17 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnTemplates
+##master-date:2006-04-28 13:47:01
+#acl -All:write Default
+#format wiki
+#language zh
+
+= 帮助-模板 =
+
+模板能让用户更容易的创建新页面。由于模板中已经填写了一些文字和结构，用户不必手工从头做起。可以使用[[帮助-变量|变量]]插入日期、时间、作者、页名，等等。
+
+模板页的名字结尾必须符合标准的模板名结尾（缺省是"Template"，简体中文版中是“模板”）。管理员可以设置配置文件中的"page_template_regex"改变缺省的模板名结尾。当你试图浏览一个不存在的页面时，新的模板页会显示在模板列表中。比如，当你点击 NonExistentHelpPage，会看到一个 HelpTemplate 的链接，点击后可以把 HelpTemplate 模板的内容载入编辑器。
+
+MoinMoin缺省自带一些其它的模板，比如 HomepageTemplate（用于用户主页），CategoryTemplate（用于将页面分类，参见[[帮助-分类]]）以及SlideTemplate（用于幻灯片，参见[[帮助-放映幻灯片]]）
+
+此页的英文版本:HelpOnTemplates

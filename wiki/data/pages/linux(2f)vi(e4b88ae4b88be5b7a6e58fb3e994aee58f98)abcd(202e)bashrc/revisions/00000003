@@ -1,0 +1,18 @@
+Describe linux/vi上下左右键变abcd .bashrc here.
+----
+
+ubuntu使用的是默认的vim-tiny，那么你可以在终端中输入如下命令：
+{{{
+export TERM=linux
+}}}
+'''terminal 类型位于 /usr/share/terminfo目录下'''
+
+这样可以解决上下左右键变成ABCD这些，ubuntu11.04默认的是TERM=xterm，你可以使用echo $term来查看一下。如果不是最新的11.4，上述操作不能成功的话，尝试使用export TERM=vt100试试。
+
+如果你安装过了vim，那么找到vimrc_example.vim拷贝的用户目录下，改名为.vimrc。
+
+
+==== 最好方案 ====
+{{{
+apt-get isntall vim
+}}}

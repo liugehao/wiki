@@ -1,0 +1,21 @@
+= iptable端口转发 =
+
+81服务器上vps商品映射,映射vps上22,80端口到公网
+
+{{{#!highlight bash
+iptables -F
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 11022 -j DNAT --to-destination 10.0.2.39:22
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 12022 -j DNAT --to-destination 10.0.2.35:22
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 13022 -j DNAT --to-destination 10.0.2.40:22
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 14022 -j DNAT --to-destination 10.0.2.41:22
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 15022 -j DNAT --to-destination 10.0.2.42:22
+
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 11080 -j DNAT --to-destination 10.0.2.39:80
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 12080 -j DNAT --to-destination 10.0.2.35:80
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 13080 -j DNAT --to-destination 10.0.2.40:80
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 14080 -j DNAT --to-destination 10.0.2.41:80
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 15080 -j DNAT --to-destination 10.0.2.42:80
+
+iptables -A PREROUTING -t nat -p tcp -i eth0 --dport 11432 -j DNAT --to-destination 10.0.2.39:5432
+
+}}}

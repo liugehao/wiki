@@ -1,0 +1,48 @@
+== 章节3 课时 39 讲解grub-kernel-root ==
+
+grub>
+root (hd0,0)
+kernel /vmlinuz-2.6.18-194.el5 ro root=LABEL=/ rhgb quiet
+initrd /initrd-2.6.18-194.el5.img
+
+
+root (hd0,0) //hda,sda 是设备文件，驱动之后的设备。grub 第一个硬盘hd0,第一个分区0
+kernel /vmlinuz-2.6.18-194.el5 此/指hd0,0
+kernel vmlinuz-2.6.18-194.el5 root=/dev/sda2 //root=根分区,可以启动不同分区的linux
+ro 只读方式，不写ro也是只读
+
+rhgb 显示图型，隐藏开机输出字符, rhel 专有。可以去掉
+quite 内核安静，不显示内核信息　。可以去掉
+
+mkinitrd 打包驱动模块到initrd...img
+
+root (hd0,<TAB>) //可以使用tab键查看
+kernel /vmli<TAB>
+initrd /initrd-<TAB>
+boot //输入完成后，boot启动
+help
+rootnoverify (hd0,3) 启动另一个bootloader(bootloader 有很多种，grub是其中一种)
+
+{{{
+kernel /vmlinuz-2.6.18-194.el5 ro root=LABEL=/ rhgb quiet vga=0x314 selinux=off acpi=off hello
+selinux=off(0) 不确定是off ,0
+acpi 电源管理
+有效参数被内核加载，如果不认识的参数，原封传给init
+init 1 ／／init进入单用户模式，不需要输入密码（红旗安全模式4）
+init 6 //关机
+}}}
+
+default=0
+timeout=5
+splashimage=(hd0,0)/grub/splash.xpm.gz //显示开机图片
+password --md5 $1$djfksdSFAdskajfd 
+//不加md5则为明文密码，它人登录后可见
+//如果按c,或e编辑，可进入单用户模式，加上密码后必须输入密码才能进单用户模式
+
+生成密码命令 grubmd5-crypt
+
+可以把密码加在title下，输入密码才可以启动系统。
+
+
+kernel /vmlinuz-2.6.18-194.el5 ro root=LABEL=/ init=/bin/bash
+init=/bin/bash 最简启动，不启动/sbin/init,直接启动bash,省掉其它初始化

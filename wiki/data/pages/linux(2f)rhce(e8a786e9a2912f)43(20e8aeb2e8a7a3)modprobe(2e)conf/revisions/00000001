@@ -1,0 +1,23 @@
+== 章节3 课时 43 讲解modprobe.conf ==
+
+ 内核模块加载方法多种
+  1. kernel kernel.org 下载内核源码make menuconfig
+     demsg | more
+  1. initrd mkinitrd 制作驱动映象，（启动相关驱动放在initrd或者kernel中）
+  1. /etc/rc.d/rc.sysinit 驱动的80-90%在这里配置
+  1. /etc/modprobe.conf 放和启动无关的驱动，生产驱动，网卡驱动
+     grep modprobe /etc/rc.d/rc.sysinit
+     
+     depmod -v |grep bond 查找内核模块 （depmond 加载所有内核模块）
+     
+     网卡多链路，2块网卡当一块用 /etc/modprobe.conf
+     alias bond0 bonding 加载bonding模块，别名bond0
+     options bond0 mode=0 (0负载均衡模式 1高可用方式) options 加载某个模块，时设置参数
+     ifenslave bond0 eth1 eth0 执行命令才生效，把它放在rc.local
+     system-config-network 设置IP，(system-config-network-tui),或者netocnfig -d bond0
+     
+     switch交换机要支持多链路
+     
+     hba光纤卡也可以bond,实现负载均衡
+     
+  

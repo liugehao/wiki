@@ -1,0 +1,6 @@
+在这里详述 linux/其它。
+
+fedora 开机启动服务
+{{{#!highlight bash
+systemctl enable nginx.service
+}}}

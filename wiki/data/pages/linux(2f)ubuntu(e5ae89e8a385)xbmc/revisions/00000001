@@ -1,0 +1,28 @@
+= ubuntu安装xbmc =
+----
+{{{
+apt-get update
+sudo apt-get install xbmc xinit x11-xserver-utils
+sudo adduser xbmc --gecos XBMC
+sudo usermod --group audio,video,fuse,cdrom,plugdev xbmc
+
+sudo vi /etc/init/tty1.conf
+}}}
+把exec /sbin/getty -8 38400 tty1 换成 exec /bin/login -f xbmc </dev/tty1 > /dev/tty1 2>&1 ，可以自动登录。
+{{{
+#exec /sbin/getty -8 38400 tty1
+exec /bin/login -f xbmc </dev/tty1 > /dev/tty1 2>&1
+}}}
+xbmc帐号下  .bash_profile 文件自动运行xbmc.
+{{{
+$cat .bash_profile 
+
+case "`tty`" in
+/dev/tty1) clear && startx &>/dev/null;;
+esac
+
+$cat .xsession
+
+exec xbmc --standalone
+
+}}}

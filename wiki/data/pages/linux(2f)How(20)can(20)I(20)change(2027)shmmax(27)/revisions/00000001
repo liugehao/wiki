@@ -1,0 +1,32 @@
+= How can I change 'shmmax' =
+----
+
+How can I change 'shmmax'
+
+    I have installed Oracle 9i on RedHat 9.
+
+    Current value of 'shmmax' is 33554432.
+
+    Some people recommend value of appr. 50% of the RAM.
+
+    I tried to change the value of 'shmmax' in two ways:
+{{{
+    1. cat 268435456 > /proc/sys/kernel/shmmax
+    2. sysctl -w kernel.shmmax=268435456
+}}}
+    After restarting the machine the value of 'shmmax' is 33554432 again ?!?
+
+=== 重启后恢复无效解决办法 ===
+As root I edited '''/etc/sysctl.conf''' by adding following line at the end of the file:
+{{{
+kernel.shmmax = 268435456
+}}}
+After rebooting the machine I found the same value (268435456) in /proc/sys/kernel/shmmax
+
+So, I guess the things go as follows:
+
+"/proc/sys/kernel/shmmax" reads the value from the "/etc/sysctl.conf"
+
+If there's nothing about SHMMAX excplicitly in "/etc/sysctl.conf" then I guess "/proc/sys/kernel/shmmax" accepts the 33554432 which could be the default, I suppose.
+
+That's Ok. 

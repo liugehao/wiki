@@ -1,0 +1,109 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnProcessingInstructions
+##master-date:2006-06-29 18:59:34
+#acl -All:write Default
+#format wiki
+#language zh
+
+MoinMoin 的数据处理指令与 XML 数据处理指令具有相同的意义：它们控制处理页面所采取的方式。数据处理指令是一些由 "{{{#}}}" 字符开头的关键字加上一些可选的参数组成的行；这些关键字总是大小写敏感的。由两个井字符号开头的行是注释行，将不被显示在处理过得页面中。
+
+所有的数据处理指令必须出现现在页面的开头。注释处理指令例外，它们可以出现在使用 "wiki" 格式（不能出现在使用其他格式的页面中）的页面的任意位置。
+
+更多标记请见[[帮助-编辑]]。
+
+本维基支持的数据处理指令有：
+<<TableOfContents>>
+
+= ## comment =
+{{{
+## 注释，这里的任何文字都会被忽略
+}}}
+
+= #format =
+指定当前页面使用的数据格式
+{{{
+#FORMAT format-specifier optional-arguments
+}}}
+
+支持的数据格式有：
+ * '''wiki''': 默认为 MoinMoin 维基标记语言
+ * '''plain''': 普通文本
+ * '''python''': 带有语法高亮的 Python 代码
+ * 其他已安装的parser名。请到[[帮助-分析插件]]查看可以用的插件，或者到MoinMoin:ParserMarket 查看用户提供的插件。
+
+有些插件支持可选参数，请查看相关文档。
+
+= #redirect =
+重定向到另一个页面（参见 MeatBall:PageRedirect'''''' ）
+{{{
+#REDIRECT 页面名
+}}}
+
+= #refresh =
+在指定的延迟时间到达时重定向到其他页面（或外部URL又或者仅仅更新当前页面，如果不起作用 — 请使用 `config.refresh` 激活本功能）
+  * 需要在设置中激活，请看[[帮助-系统设置]]
+{{{
+#REFRESH 延迟 目标
+}}}
+
+目标可以是网页名，或者url链接。例如:
+{{{
+#refresh 0 FrontPage
+#refresh 5 http://example.com/
+}}}
+
+= #pragma =
+为当前页面设置处理模式:
+{{{
+#PRAGMA mode arguments
+}}} 
+
+模式名称大小写不敏感。
+
+!MoinMoin 内置的模式很少，你可以自己安装一些模式。已知的处理模式有：
+
+== section-numbers ==
+转换标题行自动编号功能。
+{{{
+#pragma section-numbers off
+}}}
+`off`(或`0`)关闭标题行自动编号功能，使用`on`或者`1`来打开自动编号。该模式的默认值定义于`show_section_numbers`配置项中。
+
+打开编号功能时，可以指定标题级别:
+{{{
+#pragma section-numbers 2
+}}}
+只显示二级标题及其以上的编号(三 - 六级标题与此相同)。
+
+== keywords ==
+在`<meta>` 标签中增加关键字，用于搜索引擎优化
+{{{
+#pragma keywords Cars, Vehicles, Foo
+}}} 
+
+== description ==
+在`<meta>` 标签中增加对当前页面的描述。
+{{{
+#pragma description This page is about cars.
+}}} 
+
+== deprecated ==
+将该页标记为不推荐使用的。
+{{{
+#DEPRECATED
+}}}
+
+此后对该页的更改将不创建任何备份版本并且在显示该页时将同时显示当前版本（一般为不推荐使用该页的原因）和最后一个备份版本的内容。这样可以有效的冻结该页的最后版本，使之不能被查找到（不命中陈旧内容），但其内容仍可以浏览。
+
+ * Removing the PI from the page will store '''no''' backup of the deprecation warning.
+ * In comparison to `#REDIRECT` this PI gives the ability to give the user a reason why this page is no longer of use and why they should go to a new one, while `#REDIRECT` will throw them to the new page without any reason.
+
+= #language =
+指定网页语言。
+{{{
+#language language-name
+}}}
+语言名应符合iso-639-1规范。如果`MoinMoin/i18n/`中没有该语言的翻译文件，MoinMoin会忽略这个指令。更多请看[[帮助-语言]]。
+
+此页的英文版本:HelpOnProcessingInstructions

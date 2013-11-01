@@ -1,0 +1,33 @@
+= 用Composer管理PHP包 =
+----
+
+
+使用环境
+
+=== Composer帮你解决如下问题： === 
+
+    你有一个项目，而它的运行依赖于一系列的类库
+    这些类库依赖于别的类库
+    Composer发现合适的版本下载、安装
+
+=== 安装 ===
+
+Composer包括两大逻辑部分：存储包；命令行应用程序，用来帮助你发现、下载、更新和分享代码。
+{{{
+	$ cd/path/to/my/project
+	$ curl -s http://getcomposer.org/installer| php
+	#使用下列命令看是否安装成功
+	$ php composer.phar
+	#便于使用，将其放到运行环境中
+	$ sudo mv composer.phar /usr/bin/composer
+}}}
+=== 解析composer.json文件 ===
+
+composer.json中声明了应用的依赖文件
+{{{	$ php composer.phar install }}}
+=== 自动加载 ===
+
+安装后，同时Composer提供了
+
+    vendor/autoload.php来自动加载安装的类库
+    composer.lock下次运行install就会依据次来安装指定版本，或者运行update

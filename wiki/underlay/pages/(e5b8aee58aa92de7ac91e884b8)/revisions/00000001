@@ -1,0 +1,16 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnSmileys
+##master-date:2006-08-06 12:56:00
+#acl -All:write Default
+#format wiki
+#language zh
+
+== 笑脸图形 ==
+要插入笑脸图形，只需键入下表中你喜欢的那个即可。只有当图标代号被两个“空白字符”夹在中间时，它才会被转化为一个图标。
+
+<<ShowSmileys>>
+
+更多可能出现的 wiki 标记方法，请参见 [[帮助-编辑]] 。
+
+此页的英文版本: HelpOnSmileys

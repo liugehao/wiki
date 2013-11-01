@@ -1,0 +1,18 @@
+= postgresql 导入导出压缩分割 =
+----
+用pg_dump导出，再导入，大文件用压缩的。
+{{{
+pg_dump dbname | gzip > filename.gz
+
+Reload with:
+
+gunzip -c filename.gz | psql dbname
+}}}
+或者文档分割：
+{{{
+pg_dump dbname | split -b 1m - filename
+
+Reload with:
+
+cat filename* | psql dbname
+}}}

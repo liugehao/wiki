@@ -1,0 +1,31 @@
+== linux/rhce视频/18 解决linux访问比较慢的问题 ==
+----
+{{{
+icmp协议：
+ping www.sina.com.cn
+traceroute www.sina.com.cn
+mtr www.sina.com.cn
+通路　，掉包率
+
+查看本机
+top
+vmstat 
+netstat
+netstat -antup
+  tcp listen
+  udp 无状态
+
+
+特别多的　ESTABLISHED　，有可能多人在看网站，也可能是ＣＣ攻击（恶意访问，查看ＩＰ，同一ＩＰ数多为ＣＣ）
+如果连接中ESTABLISHED占少数，syn-flood DDOS攻击
+
+抓包工具
+iptraf tcpdump wireshark
+
+arping 网关ＩＰ　
+如果有２个mac地址，有arp欺骗，（一般情况下，出现次数多的mac为假网关）
+
+arp -s ip mac 绑定网关
+
+ifconfig eth0:1 192.168.1.2 网卡添加多地址
+}}}

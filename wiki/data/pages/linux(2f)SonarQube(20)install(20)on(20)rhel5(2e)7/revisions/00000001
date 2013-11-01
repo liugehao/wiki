@@ -1,0 +1,41 @@
+Describe linux/SonarQube install on rhel5.7 here.
+
+wget http://download.oracle.com/otn-pub/java/jdk/7u45-b18/jdk-7u45-linux-x64.tar.gz?AuthParam=1382076511_4d72c870040139760a6f1b5294421b33
+
+tar zxf jdk-7u45-linux-x64.tar.gz
+
+mv jdk1.7.0_45 /usr/
+
+vi /etc/profile
+
+在profile 文件的尾部面加入
+
+JAVA_HOME=/usr/jdk1.7.0_45
+PATH=$JAVA_HOME/bin:$PATH
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
+
+export JAVA_HOME
+export PATH
+export CLASSPATH
+export CATALINA_HOME    
+
+保存 退出
+在shell输入 source /etc/profile 
+
+
+wget http://dist.sonar.codehaus.org/sonar-3.7.2.zip
+unzip sonar-3.7.2.zip
+mv sonar-3.7.2 /etc/sonar
+/etc/sonar/bin/linux-x86-64/sonar.sh console //start sonar
+
+open browse http://localhost:9000/
+
+
+
+wget http://repo1.maven.org/maven2/org/codehaus/sonar/runner/sonar-runner-dist/2.3/sonar-runner-dist-2.3.zip
+unzip sonar-runner-dist-2.3.zip -d /etc
+
+wget https://github.com/SonarSource/sonar-examples/archive/master.zip
+unzip sonar-examples-master.zip
+cd sonar-examples-master/projects/languages/java/sonar-runner/java-sonar-runner-simple
+/etc/sonar-runner-2.3/bin/sonar-runner

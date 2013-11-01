@@ -1,0 +1,56 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnActions
+##master-date:2006-05-02 20:45:32
+#acl -All:write Default
+#format wiki
+#language zh
+
+== Actions 操作 ==
+
+Actions 是对整个维基或者单个页面进行操作的工具，但是它不像宏操作那样查看网页时''增加''页面的内容，而是对页面内容进行''处理''。它们或者基于页面内容产生某种输出(像搜索之类的导航操作)，或者调用与查看页面无关的函数(像删除或者重命名页面)。
+
+系统中已经定义了包括编辑页面在内的一些操作方法。你也可以自定义操作方法，对系统加以扩展。详细信息请看[[帮助-开发指南]]。
+
+下面的操作，被附加到用户自定义操作列表中，放置在每个页面的底部 (或者在 "更多操作" 菜单中)。任何 mixed-case 操作都是如此处理的。对其他操作(lower-case)，请看本页下方的列表。某些操作可能在你的维基站点上不能使用。
+
+ * `AttachFile`: 为页面添加附件，详细信息请看 [[/附件]].
+  * 如果没有登录，此操作无效。
+ * `DeletePage`: 确认后删除页面；删除意味着生成页面备份后删除页面，也就是说，你还可以 ''恢复'' 页面 (只要备份没有被物理删除)。
+  * 如果没有登录，此操作无效。
+ * `RenamePage`: 确认后重命名页面。
+ * `LikePages`: 列出标题开头或者结尾的 MeatBall:WikiWord 与当前页面标题一样的所有页面。
+ * `LocalSiteMap`: 显示当前页面的临近链接，也就是列出所有的引用页面，以及这些页面的引用页面，在特定的深度范围内。
+ * `SpellCheck`: 对当前页面进行拼写检查。详细信息请看[[帮助-拼写检查]]
+ * `SubscribeUser`: 管理员可以用为其他用户订阅页面。
+
+下面是'''内置的'''操作列表，它们可以实现页面顶部和底部的图标和链接所示的功能，或者某个宏的功能。
+
+ * `titleindex`: 将所有页面的标题以文本格式列出来 (在维基地址后面添加 `?action=titleindex`) 或者以 XML 格式列出来 (`?action=titleindex&mimetype=text/xml`)。这个操作的主要用途是实现 MeatBall:MetaWiki
+ * `fullsearch`: 点击由宏 `FullSearch` 产生的 "Search Text" 按钮时会触发这个操作 (`?action=fullsearch&value=HelpOnActions`)。
+ * `titlesearch`: 点击由宏 `TitleSearch` 产生的 "Search Titles" 按钮时会触发这个操作 (`?action=titlesearch&value=HelpOnActions`)。
+ * `inlinesearch`: 用于完成每个页面顶部的搜索框的操作 (它使用 POST 请求，所以在 URLs 中体现不出这个操作)。
+ * `highlight`: 点击搜索结果列表中的某个链接时，对搜索结果高亮显示。
+ * `diff`: 显示页面的各个版本之间的差异。
+ * `info`: 显示页面的元信息(meta-data)。
+ * `recall`: 显示页面的某个旧版本。
+ * `show`: 显示页面 (默认操作)。
+ * `refresh`: 刷新页面的缓存 (目前只在 XSLT 格式的页面中起作用)。
+ * `print`: 显示页面的打印视图，其省略了导航条内容。
+ * `edit`: 编辑页面。
+ * `savepage`: 保存页面 (不要手动使用这个操作)。
+ * `subscribe`: 订阅页面。
+ * `userform`: 保存用户设置。
+ * `bookmark`: 保存 "最新改动" 书签。
+ * `raw`: 以 text/plain 格式显示原始的维基标记文本 (比如为了通过wget进行备份)。 `SystemInfo?action=raw` 将显示 SystemInfo 页面的原始标记。
+ * `format`: 产生特定格式的页面视图。通过参数 `mimetype` 指定 mime 类型。
+  * 它可用于生成页面的 '''DocBook''' 标记。只需要在地址后面附加 `?action=format&mimetype=xml/docbook`。 注意 PyXML 安装后才能使用此功能。
+ * `rss_rc`: 生成 "最新改动" RSS。
+ * `chart`: 显示图表。
+ * `export`: 输出维基内容。 ''[experimental]''
+ * `content`: 用于转换成静态网页，这个操作输出单纯的页面内容，不包括任何 <html>，<head>，或 <body> 标记。
+ * `links`: 生成所有页面及其所含链接的列表，像 MeatBall:LinkDatabase 一样。
+ * `xmlrpc`: 维基 XML-RPC 接口，请看 MeatBall:XmlRpcToWiki.
+ * `revert`: 将页面恢复到某个老版本。
+
+此页的英文版本: HelpOnActions

@@ -1,0 +1,8 @@
+在这里详述 db/Warning: mysql_connect() [function.mysql-connect]: mysqlnd cannot connect to MySQL 4.1+ using the old insecure authentication.。
+{{{
+Warning: mysql_connect() [function.mysql-connect]: mysqlnd cannot connect to MySQL 4.1+ using the old insecure authentication. Please use an administration tool to reset your password with the command SET PASSWORD = PASSWORD('your_existing_password'). This will store a new, and more secure, hash value in mysql.user. If this user is used in other scripts executed by PHP 5.2 or earlier you might need to remove the old-passwords flag from your my.cnf file in path/to/the/file/where/connection/script/is/written/
+}}}
+更改my.cnf
+{{{
+old_passwords = 0
+}}}

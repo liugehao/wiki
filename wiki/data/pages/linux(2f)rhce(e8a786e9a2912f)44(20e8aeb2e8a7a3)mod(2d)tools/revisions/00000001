@@ -1,0 +1,26 @@
+== 章节3 课时 44 讲解mod-tools ==
+#rpm -qf /sbin/lsmod 
+module-init-tools-3.3-0.pre3.1.60.el5
+#rpm -qfl /sbin/lsmod //l 显示该包中的所有文件
+
+lsmod 显示所有模块
+加载内核模块
+modprobe usb-storage 
+insmod 加载不上就报错
+lsmod |grep fat
+
+modprobe  vfat 加载vfat,同时加载fat ,vfat 依赖fat
+modprobe -r vfat 卸载vfat,fat
+
+insmod /lib/modules/2.6.18-194.el5/kernel/fs/vfat/vfat.ko  出错
+
+insmod /lib/modules/2.6.18-194.el5/kernel/fs/fat/fat.ko
+insmod /lib/modules/2.6.18-194.el5/kernel/fs/vfat/vfat.ko 成功
+
+rmmod vfat 卸载
+rmmod fat 
+
+depmod -a 把所有系统中的所有内核版本，内核模块分别注册在各自版本内核模块中
+depmod 2.6.18-194.el5 把内核2.6.18-194.el5的模块全部注册
+
+modinfo 查看模块信息

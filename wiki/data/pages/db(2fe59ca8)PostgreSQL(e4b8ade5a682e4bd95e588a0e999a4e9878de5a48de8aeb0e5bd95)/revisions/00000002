@@ -1,0 +1,12 @@
+= 在PostgreSQL中如何删除重复记录 =
+----
+
+
+在PostgreSQL中删除重复记录其实很简单，不论有多少行重复，只要在要删除重复记录的表中table加一列rownum字段(id为table表中的主键)，类型设置为serial类型即可，然后执行sql
+{{{#!highlight sql
+delete from table where rownum not in(
+    select max(rownum) from table group by id
+)
+}}}
+
+最后删除列rownum即可

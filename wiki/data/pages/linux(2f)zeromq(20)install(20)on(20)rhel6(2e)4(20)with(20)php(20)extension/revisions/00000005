@@ -1,0 +1,129 @@
+Describe linux/zeromq install on rhel6.4 with php extension here.
+----
+
+=== zeromq install on rhel 6.4 x64 ===
+{{{
+cd /dev/yum.repo.d/
+wget http://download.opensuse.org/repositories/home:/fengshuo:/zeromq/CentOS_CentOS-6/home:fengshuo:zeromq.repo
+yum update
+yum install zeromq
+yum install zeromq-devel # for development
+}}}
+
+=== php zermoq extension ===
+{{{
+yum install libxml2-devel
+
+wget http://cn2.php.net/distributions/php-5.5.4.tar.bz2
+tar zxf php-5.5.4.tar.bz2
+./configure
+pear channel-discover pear.zero.mq
+pecl install pear.zero.mq/zmq-beta
+
+cp ./php.ini-development /usr/local/lib/php.ini
+vi /usr/local/lib/php.ini
+}}}
+
+#add line  and save
+{{{
+extension=zmq.so
+}}}
+
+=== php_zeromq_server.php ===
+[[attachment:php_zeromq_server.php]]
+{{{#!highlight php
+<?php
+$context = new ZMQContext(1);
+// Socket to talk to clients
+$responder = new ZMQSocket($context, ZMQ::SOCKET_REP);
+$responder->bind("tcp://*:5555");
+while(true) {
+// Wait for next request from client
+$request = $responder->recv();
+//printf ("Received request: [%s]\n", $request);
+// Do some 'work'
+// Send reply back to client
+$responder->send("World");
+}
+}}}
+
+=== php_zeromq_client.php ===
+[[attachment:php_zeromq_client.php]]
+{{{#!highlight php
+<?php
+//count exec time
+function time1(){
+    list($a, $b) = explode(" ", microtime());
+    return ((float)$a + (float)$b);
+}
+$start_time = time1();
+$count = 100000;
+$sucesscount = 0;
+$context = new ZMQContext();
+ //  Socket to talk to server
+echo "Connecting to hello world server...\n";
+$requester = new ZMQSocket($context, ZMQ::SOCKET_REQ);
+$requester->connect("tcp://localhost:5555");
+for($request_nbr = 0; $request_nbr != $count; $request_nbr++) {
+    //printf ("Sending request %d...\n", $request_nbr);
+    $requester->send("Hello");
+    $reply = $requester->recv();
+    if($reply == "World")$sucesscount ++;
+    //printf ("Received reply %d: [%s]\n", $request_nbr, $reply);
+}
+echo "\nseconds for send {$count} times 'hello' :" .  (time1()- $start_time)."\n sucesscount:{$sucesscount}";
+}}}
+
+=== test ===
+{{{
+php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php & php php_zeromq_client.php &
+}}}
+
+=== 测试结果  ==
+单server进程，10客户进程并发，单进程１０Ｗ次发送接收，用时最快４２s，平均２０８３３/s　- ２３５００/s之间
+{{{
+seconds for send 100000 times 'hello' :42.54803109169
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.549309015274
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.571755886078
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.506102800369
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.516571998596
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.603147983551
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.622861862183
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.589258909225
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.608597040176
+ sucesscount:100000
+seconds for send 100000 times 'hello' :42.613350152969
+
+
+
+
+seconds for send 100000 times 'hello' :48.482357025146
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.780467987061
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.771656036377
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.794227838516
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.816515922546
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.832470178604
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.853888034821
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.85328912735
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.888187885284
+ sucesscount:100000
+seconds for send 100000 times 'hello' :48.886878013611
+ sucesscount:100000
+
+}}}

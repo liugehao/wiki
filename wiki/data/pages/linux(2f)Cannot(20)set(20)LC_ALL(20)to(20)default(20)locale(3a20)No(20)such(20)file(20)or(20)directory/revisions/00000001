@@ -1,0 +1,5 @@
+= Cannot set LC_ALL to default locale: No such file or directory =
+----
+{{{
+sudo locale-gen --lang zh_CN.UTF-8
+}}}

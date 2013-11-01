@@ -1,0 +1,10 @@
+安装python-ldap出错：
+{{{
+gcc -pthread -fno-strict-aliasing -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -fPIC -DHAVE_SASL -DHAVE_TLS -DHAVE_LIBLDAP_R -DHAVE_LIBLDAP_R -DLDAPMODULE_VERSION=2.4.10 -IModules -I/opt/openldap-RE24/include -I/usr/include/sasl -I/usr/include -I/usr/include/python2.7 -c Modules/LDAPObject.c -o build/temp.linux-x86_64-2.7/Modules/LDAPObject.o
+
+Modules/LDAPObject.c:18:18: 致命错误： sasl.h：没有那个文件或目录
+
+}}}
+{{{
+sudo apt-get install libldap2-dev libsasl2-dev
+}}}

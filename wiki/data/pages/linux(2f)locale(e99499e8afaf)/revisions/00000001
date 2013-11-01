@@ -1,0 +1,11 @@
+= locale错误 =
+----
+重新设置。
+{{{
+rm /var/lib/locales/supported.d/en
+rm /var/lib/locales/supported.d/zh
+cp /usr/share/i18n/SUPPORTED /var/lib/locales/supported.d/local
+vi /var/lib/locales/supported.d/local #保留en zh开头的行
+
+locale-gen --purge
+}}}

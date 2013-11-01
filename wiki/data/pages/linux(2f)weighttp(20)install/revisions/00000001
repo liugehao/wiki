@@ -1,0 +1,41 @@
+Describe linux/weighttp install here.
+----
+wiki: http://redmine.lighttpd.net/projects/weighttp/wiki
+{{{
+git clone git://git.lighttpd.net/weighttp
+cd weighttp
+./waf configure
+}}}
+{{{
+checking for libary ev :not found
+}}}
+libev: http://dist.schmorp.de/libev/
+{{{
+wget http://dist.schmorp.de/libev/libev-4.15.tar.gz
+tar -zxf libev-4.15.tar.gz
+cd libev-4.15 
+./configure
+make && make install
+ldconfig
+}}}
+{{{
+./waf build
+
+./waf install #root
+}}}
+
+{{{
+[root@localhost lib]# weighttp
+weighttp: error while loading shared libraries: libev.so.4: cannot open shared object file: No such file or directory
+
+[root@localhost libev-4.15]# find / -name libev.so.4
+/usr/local/lib/libev.so.4
+
+ln -s /usr/local/lib/libev.so.4 /usr/lib/libev.so.4
+
+or 
+
+vi /etc/ld.so.conf.d/local.conf
+add a line
+/usr/local/lib
+}}}

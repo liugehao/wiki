@@ -1,0 +1,21 @@
+在这里详述 ruby/custom_require.rb:36:in `require': cannot load such file -- mkmf (LoadError)。
+{{{
+root@x201i:/home/l# gem install classifier
+Building native extensions.  This could take a while...
+ERROR:  Error installing classifier:
+	ERROR: Failed to build gem native extension.
+
+        /usr/bin/ruby1.9.1 extconf.rb
+/usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require': cannot load such file -- mkmf (LoadError)
+	from /usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from extconf.rb:1:in `<main>'
+
+
+Gem files will remain installed in /var/lib/gems/1.9.1/gems/fast-stemmer-1.0.2 for inspection.
+Results logged to /var/lib/gems/1.9.1/gems/fast-stemmer-1.0.2/ext/gem_make.out
+}}}
+
+解决办法:
+{{{
+apt-get install ruby1.9.1-dev
+}}}

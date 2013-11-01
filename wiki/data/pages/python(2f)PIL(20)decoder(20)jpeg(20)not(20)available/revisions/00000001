@@ -1,0 +1,22 @@
+Describe python/PIL decoder jpeg not available here.
+----
+{{{#!highlight bash
+apt-get install libjpeg-dev
+
+pt-get install libfreetype6-dev
+}}}
+
+
+Ubuntu11.10上，libjpeg.so、libz.so和libfreetype.so都在路径/usr/lib/x86_64-linux-gnu下，在/usr/lib下为这3个包创建软链接后执行ldconfig
+
+
+在路径/usr/lib和/usr/local下查找PIL相关文件和目录，全部删除
+
+Ubuntu11.10上，libjpeg.so、libz.so和libfreetype.so都在路径/usr/lib/x86_64-linux-gnu下，在/usr/lib下为这3个包创建软链接后执行ldconfig
+
+删除PIL解压后的安装包Imaging-1.1.7，重新解压，并修改setup.py，或者pip安装
+{{{#!highlight bash
+rm -rf /usr/local/lib/python2.7/dist-packages/PIL*
+rm -rf /tmp/pip-*
+pip install PIL
+}}}

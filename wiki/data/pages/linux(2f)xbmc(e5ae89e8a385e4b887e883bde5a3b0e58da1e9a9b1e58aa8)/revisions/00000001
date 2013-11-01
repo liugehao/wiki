@@ -1,0 +1,11 @@
+= xbmc安装万能声卡驱动 =
+----
+{{{
+sudo apt-get install alsa-utils
+}}}
+然后执行
+{{{
+sudo alsamixer
+}}}
+按‘m'，把MM改成00，MM状态是静音。
+按上下，调整音量。

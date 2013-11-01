@@ -1,0 +1,93 @@
+== 章节3 课时 46 讲解network-fconfig-ip-route-config ==
+{{{
+ifconfig 看不到没有设置IP的网卡
+ifconfig eth1 192.168.0.11
+ifconfig eth1 down
+ifconfig eth1 up
+
+ip ad sh = ip address show 命令显示IP地址，功能比ifconfig 强大
+
+ip ad help 帮助
+ip ad add 192.168.1.254 dev eth1 添加一个IP ，ifconfig看不到
+{{{
+root@x201i:/tmp# ip help
+Usage: ip [ OPTIONS ] OBJECT { COMMAND | help }
+       ip [ -force ] -batch filename
+where  OBJECT := { link | addr | addrlabel | route | rule | neigh | ntable | tunnel | tuntap | maddr | mroute | mrule | monitor | xfrm | netns | l2tp }
+       OPTIONS := { -V[ersion] | -s[tatistics] | -d[etails] | -r[esolve] | -f[amily] { inet | inet6 | ipx | dnet | link } | -l[oops] { maximum-addr-flush-attempts } | -o[neline] | -t[imestamp] | -b[atch] [filename] | -rc[vbuf] [size]
+root@x201i:/tmp# ip link help
+}}}
+ip ifconfig 命令重启后，丢弃。解决方法添加到rc.local或者创建/etc/sysconfig/network-scripts/ifcfg-ethx 文件。
+
+
+策略路由：
+  百分之几的流量走路由1，百分之几的流量走路由2 ....
+  
+查看哪个网卡插了网线  
+mii-tool -v 有的网卡支持mii-tool,有的不支持
+mii-tool -F 强制10/100m，全，半双工任一模式
+
+
+/etc/sysconfig/network-scripts/ifcfg-eth0 网卡配置文件
+添加IP地址
+cp ifcfg-eth0 ifcfg-eth0:1 //后面数据随便
+vi ifcfg-eth0:1
+DEVICE=eth0:1
+IPADDR=192.168.1.12
+
+BOOTPROTO=static (dhcp) static可以删除IP设置
+ONBOOT=yes (no) 系统启动会自动启动接口，
+保存文件后
+service network restart 生效
+system-config-network-tui(gui)
+netconfig命令 默认没有安装
+netconfig -d eth0:2 192.168.1.23 永久添加
+netconfig -d eth0 192.168.1.23 永久更改
+
+ip ad add 10.0.0.1/8 dev eth0
+
+chkconfig network on
+
+init
+3完整多用户模式
+4没人用
+5图型界面
+
+chkconfig network on
+关掉iptables或者-F 清掉iptables
+chkconfig iptables off
+iptables -F 
+
+vi /etc/resolv.conf 设置dns地址
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+search abc.com //搜索域中主机
+
+vi /etc/sysconfig/network 设置网关地址
+GATEWAY＝
+vi /etc/sysconfig/network-scripts/ifcfg-eth0  设置网关
+不管设置了几个网关，只有一条生效，另外的是备用的
+root@x201i:/tmp# route -n //最上面的生效
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.20.57.1      0.0.0.0         UG    0      0        0 wlan1
+0.0.0.0         0.0.0.0         0.0.0.0         U     1002   0        0 eth0
+10.20.57.0      0.0.0.0         255.255.255.0   U     0      0        0 wlan1
+169.254.0.0     0.0.0.0         255.255.0.0     U     0      0        0 eth0
+169.254.0.0     0.0.0.0         255.255.0.0     U     1000   0        0 wlan1
+192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
+
+
+
+数据包发送，看走哪个路由，决定由哪个网卡发送。
+多个网卡不要设置同一网段IP，不要设置2个默认网关
+
+ * 路由 
+   route add -net 20.0.0.0 netmask 255.255.255.0 gw 192.168.0.200
+   当发送数据包给20.0.0.0 子网掩码 255.255.255.0 (20.0.0.1-254)时，把数据包发给192.168.0.200，让它转发
+   route del -net 20.0.0.0 netmask 255.255.255.0
+   route del default gw 192.168.1.12 删除默认路由
+   route del -net 0.0.0.0 netmask 0.0.0.0 gw 10.20.57.1 同上
+   route -n 显示路由
+   
+}}}

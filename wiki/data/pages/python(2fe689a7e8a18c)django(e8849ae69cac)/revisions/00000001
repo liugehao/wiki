@@ -1,0 +1,16 @@
+= 执行django脚本 =
+----
+
+
+在django项目中有时候会需要写一些脚本来执行一些工作，比如初始化数据，测试等等
+
+但是脚本中必须导入django项目，这时候就需要在脚本中添加如下代码：
+
+{{{#!highlight python
+import os,sys
+sys.path.insert(0,os.path.abspath(os.curdir))
+from django.core.management import setup_environ
+import settings
+setup_environ(settings)
+}}}
+然后该干嘛干嘛

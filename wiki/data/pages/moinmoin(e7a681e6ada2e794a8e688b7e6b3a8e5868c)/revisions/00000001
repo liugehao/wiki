@@ -1,0 +1,6 @@
+= moinmoin禁止用户注册 =
+----
+wikiconfig.py　中加入：
+{{{
+actions_excluded = multiconfig.DefaultConfig.actions_excluded + ['newaccount']
+}}}

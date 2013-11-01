@@ -1,0 +1,13 @@
+= nginx php 上传文件大小限制 =
+----
+在php.ini里面查看如下行：
+{{{
+upload_max_filesize = 8M
+post_max_size = 10M
+memory_limit = 20M
+}}}
+
+nginx主配置文件nginx.conf，找到http{}段，添加
+{{{
+client_max_body_size 20m;
+}}}

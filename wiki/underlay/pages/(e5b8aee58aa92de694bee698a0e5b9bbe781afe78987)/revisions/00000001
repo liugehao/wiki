@@ -1,0 +1,43 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnSlideShows
+##master-date:2004-05-15 22:02:15
+#acl -All:write Default
+#format wiki
+#language zh
+
+<<Navigation(slideshow)>>
+
+利用宏`<<Navigation>>`，您可以很方便的创建幻灯片放映。
+
+在新的页面上开始一个新的演示 - 我们使用 [[../帮助-放映幻灯片]] (''本页'') 作为例子。
+
+这里有一个幻灯片模板 SlideShowTemplate 使您方便的创建演示，试试吧。
+
+将`<<Navigation(slideshow)>>`放在页面的顶部(如上所示) - 它创建了一个链接以便在幻灯片模式和维基模式之间切换，还有一个链接以便开始幻灯片演示。
+
+可以通过名称中含有编号的子页面来引用你的幻灯片，您可以在幻灯片的首页添加类似代码:
+
+{{{
+ * ["/000 前言"]
+ * ["/100 创建幻灯片"]
+ * ...
+ * ["/900 最后: 放映开始"]
+ * ["../幻灯讲义模板"]
+}}}
+
+(!) 子页面的编号最好有一定的间隔，否则当你要插入新页面时会发现为了幻灯切换的正常顺序，你必须顺延所有编号。
+
+(!) 不要使用太长的页面标题 - 你会发现它们看起来很糟糕 (至少在维基模式下维基页面标题会自动换行).
+
+它们看来是这样的:
+ * [[/000 前言]]
+ * [[/100 创建幻灯片]]
+ * ...
+ * [[/900 最后: 放映开始]]
+ * [[../幻灯讲义模板]]
+
+您也可以把`<<Navigation(children)>>`放在页面底部 - 它会列出此页面的子页面，就像你在下面看到的那样:
+<<Navigation(children)>>
+
+此页的英文版本：HelpOnSlideShows

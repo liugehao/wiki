@@ -1,0 +1,14 @@
+Describe linux/debian中文乱码 here.
+----
+{{{
+apt-get install ttf-wqy-zenhei（安装字体） 　　
+apt-get install ibus ibus-gtk ibus-pinyin（安装输入法）
+打开终端，执行命令： 
+
+dpkg-reconfigure locales
+安装时选择的是英语，会缺少中文字体，用以下命令安装字体：
+
+apt-get install xfonts-intl-chinese wqy* 
+
+
+}}}

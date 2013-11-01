@@ -1,0 +1,45 @@
+Describe linux/sphinx写书 here.
+{{{
+pip install sphinx
+}}}
+
+生成项目
+{{{
+sphinx-quickstart
+}}}
+
+生成pdf
+{{{
+apt-get install texlive-xetex # xelatex在此包中，先不安装下面的texlive试试
+apt-get install latex-make
+
+apt-get install texlive # 先进行下面步骤，如果出错，安装texlive
+make latex
+cd builc/latex
+xelatex [abc].tex #abc为tex文件名
+}}}
+
+中文内容支持
+{{{
+fc-list :lang=zh #查看可用中文字体
+l@x201i:~/tmp/abd$ fc-list :lang=zh
+/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc: WenQuanYi Zen Hei,文泉驛正黑,文泉驿正黑:style=Regular
+/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc: WenQuanYi Zen Hei Sharp,文泉驛點陣正黑,文泉驿点阵正黑:style=Regular
+/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf: Droid Sans:style=Regular
+/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc: WenQuanYi Zen Hei Mono,文泉驛等寬正黑,文泉驿等宽正黑:style=Regular
+
+#修改source/conf.py 
+
+latex_elements = {
+# Additional stuff for the LaTeX preamble.
+'preamble': '''
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont=WenQuanYi Zen Hei, ItalicFont=WenQuanYi Zen Hei]{WenQuanYi Zen Hei}
+\setCJKmonofont[Scale=0.9]{WenQuanYi Zen Hei}
+\setCJKfamilyfont{song}[BoldFont=WenQuanYi Zen Hei]{WenQuanYi Zen Hei}
+\setCJKfamilyfont{sf}[BoldFont=WenQuanYi Zen Hei]{WenQuanYi Zen Hei}
+''',
+}
+
+
+}}}

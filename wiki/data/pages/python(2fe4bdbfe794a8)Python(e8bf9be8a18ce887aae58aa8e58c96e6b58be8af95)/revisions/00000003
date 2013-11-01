@@ -1,0 +1,43 @@
+== python/使用Python进行自动化测试 ==
+----
+
+
+
+ * 单元测试
+
+  . unittest ：Python自带的单元测试框架
+  . pyunit：Junit的Python版本
+
+
+ * 使用Pyhon进行Windows GUI测试
+  
+  这部分的功能主要就是和大家平时使用的QTP类似。在Windows下我们可以使用pywinauto这个开源的框架：
+  http://code.google.com/p/pywinauto/
+  来个小例子：
+  {{{
+  app.Notepad.MenuSelect("Help->About Notepad")
+  app.AboutNotepad.OK.Click()
+  app.Notepad.Edit.TypeKeys ("pywinauto Works!", with_spaces = True)
+  }}}
+  呵呵，强大吧
+
+ * 使用Python进行Web自动化测试
+
+  使用Python进行Web自动化测试的工具有很多，这里就向大家推荐一下我比较熟悉的Selenium（Web Driver）吧。
+  http://seleniumhq.org
+
+  我的其他博客有关于Selenium的文章，大家可以看一下。
+  RF也是不错的框架啊，基于关键字驱动的
+  http://robotframework.org/
+  twill: a simple scripting language for Web browsing
+  http://twill.idyll.org/
+
+ 
+
+ * 使用Python进行性能测试
+
+  . Python Web Performance Tool http://pywebperf.sourceforge.net/
+  . Pylot   http://www.pylot.org/gettingstarted.html
+  . Pymeter  http://pymeter.sourceforge.net/
+
+ 

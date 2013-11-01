@@ -1,0 +1,77 @@
+= mysql更改目录不能启动 =
+----
+执行操作
+{{{
+#cp -Rp /var/lib/mysql /data
+#vi /etc/mysql/my.cnf
+datadir = /data/mysql
+#service mysql start
+start: Job failed to start
+}}}
+
+出错，查看日志
+{{{
+#tail -n 100 /var/log/syslog
+
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.661013] type=1400 audit(1352794878.342:128): apparmor="DENIED" operation="mknod" parent=1 profile="/usr/sbin/mysqld" name="/data/mysql/ubuntu1204.lower-test" pid=3436 comm="mysqld" requested_mask="c" denied_mask="c" fsuid=0 ouid=0
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.661125] type=1400 audit(1352794878.342:129): apparmor="DENIED" operation="mknod" parent=1 profile="/usr/sbin/mysqld" name="/data/mysql/ubuntu1204.lower-test" pid=3436 comm="mysqld" requested_mask="c" denied_mask="c" fsuid=0 ouid=0
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.664373] type=1400 audit(1352794878.346:130): apparmor="DENIED" operation="open" parent=1 profile="/usr/sbin/mysqld" name="/data/mysql/mysql/plugin.frm" pid=3436 comm="mysqld" requested_mask="r" denied_mask="r" fsuid=111 ouid=111
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.690690] type=1400 audit(1352794878.370:131): apparmor="DENIED" operation="open" parent=1 profile="/usr/sbin/mysqld" name="/data/mysql/ibdata1" pid=3436 comm="mysqld" requested_mask="rw" denied_mask="rw" fsuid=111 ouid=111
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.694115] init: mysql main process (3436) terminated with status 1
+Nov 13 16:21:18 ubuntu1204 kernel: [ 1480.694150] init: mysql main process ended, respawning
+Nov 13 16:21:19 ubuntu1204 kernel: [ 1481.666854] init: mysql post-start process (3437) terminated with status 1
+Nov 13 16:21:19 ubuntu1204 kernel: [ 1481.723300] init: mysql main process (3474) terminated with status 1
+Nov 13 16:21:19 ubuntu1204 kernel: [ 1481.723332] init: mysql respawning too fast, stopped
+
+}}}
+== 解决办法 ==
+更改 /var/lib/mysql 为/data/mysql
+
+原来是 apparmor 做了限制。AppArmor 是内核的一个安全增强模块，对程序存取资源进行限制。
+{{{
+# vi /etc/apparmor.d/usr.sbin.mysqld
+/usr/sbin/mysqld {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/mysql>
+  #include <abstractions/winbind>
+
+  capability dac_override,
+  capability sys_resource,
+  capability setgid,
+  capability setuid,
+
+  network tcp,
+
+  /etc/hosts.allow r,
+  /etc/hosts.deny r,
+
+  /etc/mysql/*.pem r,
+  /etc/mysql/conf.d/ r,
+  /etc/mysql/conf.d/* r,
+  /etc/mysql/*.cnf r,
+  /usr/lib/mysql/plugin/ r,
+  /usr/lib/mysql/plugin/*.so* mr,
+  /usr/sbin/mysqld mr,
+  /usr/share/mysql/** r,
+  /var/log/mysql.log rw,
+  /var/log/mysql.err rw,
+  /data/mysql/ r,
+  /data/mysql/** rwk,
+  /var/log/mysql/ r,
+  /var/log/mysql/* rw,
+  /var/run/mysqld/mysqld.pid w,
+  /var/run/mysqld/mysqld.sock w,
+  /run/mysqld/mysqld.pid w,
+  /run/mysqld/mysqld.sock w,
+
+  /sys/devices/system/cpu/ r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.sbin.mysqld>
+}
+
+#service mysql start
+mysql start/running, process 3516
+}}}

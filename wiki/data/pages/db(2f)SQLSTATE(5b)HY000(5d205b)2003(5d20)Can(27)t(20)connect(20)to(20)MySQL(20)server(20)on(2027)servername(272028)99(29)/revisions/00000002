@@ -1,0 +1,107 @@
+= SQLSTATE[HY000] [2003] Can't connect to MySQL server on 'servername' (99) =
+----
+php，mysql压力测试，mysql服务器无压力，php出现以下错误：
+{{{ 
+SQLSTATE[HY000] [2003] Can't connect to MySQL server on 'servername' (99)
+}}}
+
+99:Cannot assign requested address [不能分配请求地址]
+
+客户端频繁的连服务器，由于每次连接都在很短的时间内结束，导致很多的TIME_WAIT，以至于用光了可用的端 口号，所以新的连接没办法绑定端口，即“Cannot assign requested address”。是客户端的问题不是服务器端的问题。通过netstat，的确看到很多TIME_WAIT状态的连接。
+从网上找了解决办法：
+执行命令修改如下2个内核参数  
+{{{
+sysctl -w net.ipv4.tcp_timestamps=1  开启对于TCP时间戳的支持,若该项设置为0，则下面一项设置不起作用
+sysctl -w net.ipv4.tcp_tw_recycle=1  表示开启TCP连接中TIME-WAIT sockets的快速回收
+}}}
+
+ 
+
+有关内核级别的keepalive和time_wait的优化调整 
+{{{
+#vi /etc/sysctl 
+net.ipv4.tcp_tw_reuse = 1 
+net.ipv4.tcp_tw_recycle = 1 
+net.ipv4.tcp_keepalive_time = 1800 
+net.ipv4.tcp_fin_timeout = 30 
+net.core.netdev_max_backlog =8096 
+
+#修改完记的使用sysctl -p 让它生效 
+}}}
+以上参数的注解 /proc/sys/net/ipv4/tcp_tw_reuse 该文件表示是否允许重新应用处于TIME-WAIT状态的socket用于新的TCP连接。
+
+ 
+
+修改内核参数，快速回收time_wait sockets：
+{{{
+[root@centos ~]# echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
+# 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+[root@centos ~]# echo "net.ipv4.tcp_tw_recycle = 1" >> /etc/sysctl.conf
+# 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+[root@centos ~]# sysctl -p
+}}}
+
+
+== 重点在这里，参考 ==
+修改/etc/sysctl.conf ,改完sysctl -p
+
+其中一台mysql服务器配置16G：
+{{{
+net.ipv4.ip_forward = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.default.accept_source_route = 0
+kernel.sysrq = 0
+kernel.core_uses_pid = 1
+kernel.msgmnb = 65536
+kernel.msgmax = 65536
+kernel.shmmax = 68719476736
+kernel.shmall = 4294967296
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+fs.file-max = 65536
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 1024 65536
+net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_max_tw_buckets = 8000
+}}}
+我的桌面机器，测试连接mysql测试机，php-fpm:
+{{{
+fs.file-max = 805916
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_tw_recycle = 1
+}}}
+
+
+== 参考 ==
+
+场景：使用libcurl 向本机的nginx 发请求，每隔一段时间，会出“Couldn't connect to server”，此时使用telnet 也会有错，Couldn't connect to server，同时观察netstat 发现很多TIME_WAIT。
+
+分析：客户端频繁的连服务器，由于每次连接都在很短的时间内结束，导致很多的TIME_WAIT，以至于用光了可用的端口号，所以新的连接没办法绑定端口，即“Cannot assign requested address”
+
+解决：
+
+1. 在程序中设置立即关闭不经历TIME_WAIT，以重用端口
+{{{
+int bReuseaddr=1;
+setsockopt(s,SOL_SOCKET ,SO_REUSEADDR,(const char*)&bReuseaddr,sizeof(int));
+}}}
+2. 修改内核参数
+
+vi /etc/sysctl.conf 在末尾添加以下内容：
+{{{
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+}}}
+net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+
+net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+
+net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+
+使配置生效： /sbin/sysctl -p

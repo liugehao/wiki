@@ -1,0 +1,8 @@
+Describe linux/rhel/redhat笔记 here.
+----
+echo "aaa" > tty1　＃输出内容到tty终端
+
+vi /etc/inittab
+id:3:initdefault  #3默认不启动xwindow,5开机启动xwindow
+
+1:2345:respawn:/sbin/ningetty tty1 #tty终端数量

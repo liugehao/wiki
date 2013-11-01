@@ -1,0 +1,31 @@
+Describe linux/SonarQube install on rhel5.7 here.
+用linux自带jdk出错
+安装sun(oracle)jdk [[linux/rehl5安装jdk]]
+
+==　下载安装软件 ==
+{{{
+wget http://dist.sonar.codehaus.org/sonar-3.7.2.zip
+unzip sonar-3.7.2.zip
+mv sonar-3.7.2 /etc/sonar
+/etc/sonar/bin/linux-x86-64/sonar.sh console //start sonar
+}}}
+打开浏览器，输入 http://localhost:9000/　可见软件界面安装完毕。
+
+
+== 使用方法 ==
+ 1. 下载 SonarQube runner
+    {{{
+    wget http://repo1.maven.org/maven2/org/codehaus/sonar/runner/sonar-runner-dist/2.3/sonar-runner-dist-2.3.zip
+    unzip sonar-runner-dist-2.3.zip -d /etc
+    }}}
+ 1. 下载示例项目
+    {{{
+    wget https://github.com/SonarSource/sonar-examples/archive/master.zip
+    unzip sonar-examples-master.zip
+    }}}
+ 1. 进入项目目录执行sonar-runner
+    {{{
+    cd sonar-examples-master/projects/languages/java/sonar-runner/java-sonar-runner-simple
+    /etc/sonar-runner-2.3/bin/sonar-runner
+    }}}
+ 1. 刷新浏览器，可见"Projects"中出现"Simple Java project analyzed with the SonarQube Runner"

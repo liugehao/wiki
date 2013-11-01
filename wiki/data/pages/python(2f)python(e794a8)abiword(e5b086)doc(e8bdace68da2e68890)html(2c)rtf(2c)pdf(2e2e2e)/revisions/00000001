@@ -1,0 +1,24 @@
+= python用abiword将doc转换成html,rtf,pdf... =
+----
+{{{
+sudo apt-get install abiword -y
+abiword -t output.html resume.doc # 将word转换成html
+}}}
+
+{{{#!highlight python
+    import subprocess  
+    import os  
+    import uuid  
+      
+    def document_to_html(file_path):  
+        tmp = "/tmp"  
+        guid = str(uuid.uuid1())  
+        # convert the file, using a temporary file w/ a random name  
+        command = "abiword -t %(tmp)s/%(guid)s.html %(file_path)s; cat %(tmp)s/%(guid)s.html" % locals()      
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=os.path.join(settings.PROJECT_DIR, "website/templates"))  
+        error = p.stderr.readlines()      
+        if error:  
+            raise Exception("".join(error))  
+        html = p.stdout.readlines()  
+        return "".join(html)  
+}}}

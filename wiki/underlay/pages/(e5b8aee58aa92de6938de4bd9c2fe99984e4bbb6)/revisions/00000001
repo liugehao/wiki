@@ -1,0 +1,114 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+## page was renamed from 帮助-附件
+##master-page:HelpOnActions/AttachFile
+##master-date:2005-11-20 22:00:24
+#acl -All:write Default
+#format wiki
+#language zh
+
+
+
+== 禁用添加附件功能 ==
+
+`添加附件`功能可使一个页面带有多个附件.但是该功能可能会被利用于 DoS(拒绝服务)攻击,所以维基管理员可以选择关闭此功能.
+
+详细请参照[[HelpOnConfiguration#file-attachments|Configuration of MoinMoin]]. 
+
+== 创建附件 ==
+
+要创建新的附件, 你可以在任意页面上增加一个附件链接(后面会说如何操作), 或者点击页面顶部的''附件''链接. 在第一种情况下, 保存页面后, 你可以看到一个''上载新附件''的链接. 点击它, 会引导你进入上载页面(就像直接点击''附件''链接一样). 
+
+上载表单包括两部分. 除了输入的文件之外, 还有一个可选域 (''改名为''), 它用于给上载的文件重新命名. 
+
+上载不会覆盖已经存在的文件. 如果有名字冲突, 你必须重新命名待上载的文件. 如果''改名为''是空白的, 原始文件名将被使用. 
+
+已存在的附件可以被察看, 下载或者删除, 这取决于维基的配置以及用户的权限. 例如, 如果用户在某个页面上没有删除权限, 则页面上的附件就不能被删除. 
+
+任何上载或者删除附件的操作都会在[[最新改动]]上反映出来, 因此是公开的. 与页面改动不同, 它没有历史记载, 所以应该''保持文件的本地拷贝'', 这样你可以恢复潜在的故意毁坏行为. 
+
+== 附件列表与信息 ==
+
+有两个定义过的宏, 可用于给出某个页面的附件的信息. 宏`<<AttachInfo>>`对任意附件给出简短的信息：
+
+<<AttachInfo>>
+
+宏`<<AttachList>>`列出页面的附件列表：
+
+<<AttachList>>
+
+== 附件链接 ==
+
+使用`attachment:filename.ext`指向页面附件；这种链接可使用一般链接的所有规则, 也就是图片自动嵌入. '''不要'''使用你在附件上载页面看到的`[get]`链接地址. 
+
+你也可以使用 `inline:` 替代 `attachment:`, 它会试着嵌入附件的内容. 对于图片(文件扩展名是`.gif`, `.jpg`, `.jpeg`, 或者 `.png`)这没有区别. Python源代码(也就是附件扩展名为 `.py`), 会显示为语法高亮的代码. 对其他所有文件, 与`attachment:`链接效果一样. 
+
+第三种链接类型是`drawing:`, 在下一节介绍. 
+
+== 编辑矢量图形 ==
+
+类似于 ''{{drawing:picturename}}'' 的链接允许你通过内置的Java程序交互式的编辑矢量图形. 然后Java程序会保存附件"`picturename.draw`", "`picturename.png`" 和 "`picturename.map`". 你第一次保存图形后, 生成的PNG图片会用于显示`drawing:`链接. MAP文件用于将图片部分激活为链接. 这意味着在任何浏览器中, 你只需要激活Java就可以编辑并显示结果. 
+
+第一次保存后, 要再次编辑它, 请点击 ''附件'' 并使用 `.draw`附件的''[编辑]'' 链接. 你也可以点击图片周围不可见的5像素边框来进入编辑状态. 保存图形操作也会在 [[最新改动]]上反映出来. 
+
+  /!\ 注意：程序对WikiName不敏感. 你必须提供实际的URLs(相对的或者绝对的)作为链接. 
+
+  /!\ 注意：目前图形还不支持非ascii字符作为它们的名字. 
+
+关于使用画图程序的细节, 请看 TWiki:Plugins/TWikiDrawPlugin. 
+
+== 包安装 ==
+
+请看[[帮助-包安装器]]. 
+
+== 解压zip文档 ==
+
+要使用此功能, 你必须在页面上具有下列权限：
+ * read
+ * write
+ * delete
+
+比如：
+{{{
+#acl UserName:admin,read,write,delete All:read
+}}}
+
+要访问zip文档中的文件必须先把这些文件从中解压出来.允许解压的文件总大小由配置项{{{unzip_attachments_space}}}决定.和上传文件时一样,解压zip文档时不允许覆盖已有文件,如果已存在同名文件,那么这些文件将不会被解压.允许解压的单个文件大小可以用配置项{{{unzip_single_file_size}}}进行控制.允许解压的文件个数可以在{{{unzip_attachments_count}}}中设定.
+
+注意,解压zip文档时只有最上层的文件会被解压,所有的子目录都会被忽略.
+
+可以像下面这样创建一个zip文档(译注,这似乎是在unix命令行下创建一个zip文档).
+
+{{{
+zip example.zip *.jpg
+}}}
+
+
+
+=== 上传zip文档 ===
+当你上传zip文档后,就可以看见{{{unzip}}}链接.
+ {{attachment:unzip1.png}}
+
+=== 权限不足 ===
+如果你没有足够的权限,你只能看见下面的链接.
+ {{attachment:unzip7.png}}
+
+=== 没有足够的空间 ===
+如果解压后的文件大小超过限制,你会看到下面的警告.
+ {{attachment:unzip2.png}}
+  ''允许解压的文件总大小可以通过这个配置项设置:'' {{{unzip_attachments_space}}}
+
+=== zip文档解压成功 ===
+{{attachment:unzip3a.png}} <<BR>>
+{{attachment:unzip3b.png}}
+
+=== 单个文件大小超标 ===
+如果某个文件大小超过配置项{{{unzip_single_file_size}}}设定的值,将不会被解压.
+ {{attachment:unzip5.png}}
+
+=== 嵌套的zip文档将会被忽略 ===
+如果一个zip文档中包含另一个zip文档,那么这个被包含的zip文档将会被忽略.
+If zip files are included in the zip archive, they will be skipped during the extraction. Regular files included will be extracted.
+ {{attachment:unzip6.png}}
+因此著名的 {{{42.zip}}} 将不会对系统造成影响(译注,42.zip解压后的大小是16^5^ * (2^32^ - 1)字节).
+ {{attachment:unzip6b.png}}

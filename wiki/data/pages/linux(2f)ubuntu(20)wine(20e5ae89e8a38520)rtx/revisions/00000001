@@ -1,0 +1,40 @@
+= ubuntu wine 安装 rtx =
+----
+
+有的不用安装，这是我机器上.cache上所有的东西,下载过程有的软件找不到，google之。
+{{{
+sudo apt-get install wine
+winetricks baekmuk  flash11 ie8   msxml6    unifont  vcrun2008 win2ksp4 corefonts gdiplus msls31 takao    vb6run   vcrun6 dotnet40  ie6   msxml3 track_usage vcrun2005 wenquanyi
+}}}
+
+
+安装 rtx
+regedit 下面的注册表，解决聊天记录乱码
+{{{
+REGEDIT4
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"Arial"="simsun"
+"Arial CE,238"="simsun"
+"Arial CYR,204"="simsun"
+"Arial Greek,161"="simsun"
+"Arial TUR,162"="simsun"
+"Courier New"="simsun"
+"Courier New CE,238"="simsun"
+"Courier New CYR,204"="simsun"
+"Courier New Greek,161"="simsun"
+"Courier New TUR,162"="simsun"
+"FixedSys"="simsun"
+"Helv"="simsun"
+"Helvetica"="simsun"
+"MS Sans Serif"="simsun"
+"MS Shell Dlg"="simsun"
+"MS Shell Dlg 2"="simsun"
+"System"="simsun"
+"Tahoma"="simsun"
+"Times"="simsun"
+"Times New Roman CE,238"="simsun"
+"Times New Roman CYR,204"="simsun"
+"Times New Roman Greek,161"="simsun"
+"Times New Roman TUR,162"="simsun"
+"Tms Rmn"="simsun"
+}}}

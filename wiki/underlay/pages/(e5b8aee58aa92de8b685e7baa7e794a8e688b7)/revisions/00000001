@@ -1,0 +1,15 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:HelpOnSuperUser
+##master-date:2006-06-15 12:43:00
+#acl -All:write Default
+#format wiki
+#language zh
+
+超级用户（从1.5.2版中开始出现）是一个或多个可信任的用户，他们具有整个维基的管理操作权限，比如完全备份、软件安装、语言安装（通过SystemPagesSetup）。(请不要和[[帮助-访问权限控制表]]相混淆了）
+
+在他们的用户设置界面中，显示了其他的用户列表，他们可以暂时"变成"这些用户来帮助或者禁用这些用户。
+
+请看[[帮助-系统设置]]中如何设置超级用户，以及[[帮助-用户管理]]和[[帮助-包安装器]]中的一些例子。
+
+此页的英文版本: HelpOnSuperUser

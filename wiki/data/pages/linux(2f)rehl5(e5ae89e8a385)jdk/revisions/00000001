@@ -1,0 +1,21 @@
+= rehl5安装jdk =
+----
+{{{
+解压jdk.tar.gz到任意目录
+
+/etc/profile文件	 -- 全部用户有效
+
+在profile 文件的尾部面加入
+
+JAVA_HOME=/usr/java/jdk1.5.0_16	 -- jdk 的安装路径
+PATH=$JAVA_HOME/bin:$PATH
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
+
+export JAVA_HOME
+export PATH
+export CLASSPATH
+export CATALINA_HOME	
+
+保存 退出
+在shell输入 source /etc/profile 
+}}}

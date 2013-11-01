@@ -1,0 +1,10 @@
+Describe linux/rhel6 install apache here.
+----
+{{{
+wget ftp://ftp.pbone.net/mirror/ftp.sourceforge.net/pub/sourceforge/f/fu/fuduntu/sources/apr-1.4.6-1.fu2013.src.rpm
+./configure && make && make install
+wget ftp://ftp.pbone.net/mirror/ftp.sourceforge.net/pub/sourceforge/f/fu/fuduntu/sources/apr-util-1.4.1-3.fu2013.src.rpm
+./configure --with-apr=/usr/local/apr && make && make install
+wget <apache.src>
+./configure --prefix=/usr/local/apache --enable-so --enable-mods-shared=most --with-mpm=worker 
+}}}

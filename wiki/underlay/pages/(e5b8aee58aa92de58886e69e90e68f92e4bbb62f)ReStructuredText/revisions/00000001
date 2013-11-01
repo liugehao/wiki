@@ -1,0 +1,139 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page: HelpOnParsers/ReStructuredText
+##master-date: 2006-04-28 14:13:00
+#acl -All:write Default
+#format wiki
+#language zh
+
+= 什么是 ReStructured Text? =
+
+Re``Structured``Text 是一种易读的，所见即所得的纯文本标记语法和分析系统。可用于内嵌程序文档 (比如 Python 的文档字符串)，快速生成简单的网页或者独立的文档。Re``Structured``Text 设计用于特定应用领域。Re``Structured``Text 是对 Structured``Text 和 Setext 轻量级标记系统的修订和新的阐释。
+
+刚接触维基的人们往往发现 Re``Structured``Text 标记看起来更加自然，比 MoinMoin 默认的标记语言更容易学习。
+
+= ReStructuredText 分析器 =
+
+== 安装 ==
+
+你必须安装 Python 的 docutils 包之后，才能使用这个功能。 docutils 提供了 MoinMoin 必需的 Re``Structured``Text 支持。
+
+MoinMoin 的版本决定了你要安装的 docutils 的版本。
+如果你正在阅读的这部分文字是 MoinMoin 的发行版中的内容，那么你可能已经使用 MoinMoin 1.5 或者更高版本。目前 (2006年一月)它需要 docutils 0.4.0 或者更高版本，或者 0.3.10 snapshot。如果你在 Linux 上使用 MoinMoin，docutils 可能已经在你的Linux发行版中安装好了。比如在 Debian GNU/Linux 中，你只需要输入 {{{apt-get install python-docutils}}}.  其他 Linux 发行版使用其他的名字来安装: 请看你的 Linux 发行版的文档。
+
+== MoinMoin中的分析器 ==
+分析器支持的功能与 docutils HTML writer 的功能一样。但是，为了让它们在 MoinMoin 中更好的工作，对其中一些功能作了细微地改动。后面会给出详细的解释。从 1.3.2 版开始，这个分析器已经成为 MoinMoin 发行版的一部分。但它也可以用于1.2.X 和 1.3.X 的所有版本。
+
+== 在MoinMoin中使用 ReST  ==
+
+=== 示例 ===
+
+{{{#!rst
+This is a *very* simple example. If you see two asterisks around the word "very" in the previous sentence, then the module docutils is improperly installed (or not installed at all). When the module docutils is there, the word is displayed in italics and this whole block of text is not displayed in a special source-code-like format, but like a normal part of the page.
+}}}
+
+=== Unknown Targets ===
+
+Unknown targets 用于创建维基链接。通常在 reStructuredText 文档中 unknown target 会导致错误发生。现在为了保证维基的功能，unknown targets 会用 target name 作为维基页面的名字来创建链接。例如:
+
+ {{{ #!rst
+ 
+Here is a link to a MoinMoin page named SecondPage_.
+}}}
+
+ {{{#!rst
+ 
+Here is a link to a MoinMoin page named SecondPage_.
+}}}
+
+上面包含一个指向 "SecondPage" 的 reStructuredText reference。 这个 reference 通常会导致 docutils 分析器中的 unknown target error。 这是因为文档中没有 "SecondPage" 这样一个目的地。但是，在 MoinMoin 分析器中， "SecondPage_" 产生一个指向 "SecondPage" 页面的链接。
+
+=== 对 MoinMoin 特有的链接方式的支持 ===
+
+除 hyperlink target 之外的 MoinMoin 特有的链接方式都是支持的。例如:
+
+ {{{ #!rst
+Here is a link to a page attachment__.
+
+__ attachment:Attachment.zip
+}}}
+
+ {{{#!rst
+Here is a link to a page attachment__.
+
+__ attachment:Attachment.zip
+}}}
+
+上面创建了附件 Attachment.zip 的链接。如果附件不存在，链接文字会被 MoinMoin 的上载附件的提示文字所代替。所支持的 MoinMoin-链接方式包括:
+
+    * {{{wiki:}}}
+    * {{{attachment:}}}
+    * {{{inline:}}}
+    * {{{drawing:}}}
+    
+=== 内嵌图像 ===
+
+Docutils image directives, that are not urls, are converted to MoinMoin {{{inline:}}} links. This produces the expected behavior of inserting the image into the document. If the image attachment does not exist, the typical MoinMoin upload new attachment message will be displayed instead. For example:
+
+ {{{ #!rst
+Here is the picture I took yesterday |image|
+
+.. |image| image:: Yesterday.jpg
+}}}
+
+ {{{#!rst
+Here is the picture I took yesterday |image|
+
+.. |image| image:: Yesterday.jpg
+}}}
+
+The above will insert the image "Yesterday.jpg" in place of {{{|image|}}}.
+
+=== Experimental Features ===
+
+The include and macro directives are considered experimental due to lack of
+testing. They are expected to work but have not been used extensively.
+
+==== Include Support ====
+
+The reStructuredText include directive is supported with some restrictions. The directive allows including wiki pages from the same wiki (page attachments are not candidates for the include directive). Included pages must be formatted using reStructuredText (wiki formatted pages will produce improperly formatted documents). For example, the following would insert the pages header and footer surrounding the page contents.
+
+ {{{ #!rst
+.. include:: header
+
+The sole document sentence.
+
+.. include:: footer
+}}}
+
+The number of included documents is limited to ten. This is to prevent denial of service attacks using recursive include directives.
+
+==== Macro Support ====
+
+The MoinMoin reStructuredText parser adds a new MoinMoin specific macro
+directive. The directive allows access to MoinMoin macros from within a
+reStructuredText document. For example:
+
+ {{{ #!rst
+Use the title search macro to insert a search box to search through page titles.
+
+.. macro:: [[TitleSearch]]
+}}}
+
+ {{{#!rst
+Use the title search macro to insert a search box to search through page titles.
+
+.. macro:: [[TitleSearch]]
+}}}
+
+=== Known Issues ===
+
+ * Docutils and MoinMoin use different sets of css directives. Some directives overlap, while others do not. For example, the note directive is not displayed with any special formatting. This issue is most severe when using the rightsidebar theme with the docutils sidebar directive. The docutils sidebar will replace the MoinMoin sidebar. It is currently recommended that the sidebar directive not be used with MoinMoin.
+ * Features related to external URL and local file retrieval are unsupported by the parser in order to guarantee local security. Besides that, raw roles and other features that might support the user to output raw HTML are disallowed, too.
+
+=== Links ===
+
+  * [[http://docutils.sourceforge.net/rst.html|reStructuredText]]
+  * [[http://docutils.sourceforge.net/docs/user/rst/quickref.html|Quick Reference]]
+  * [[http://docutils.sourceforge.net/|Docutils]]
+  * [[HelpOnParsers/ReStructuredText/RstPrimer|A ReStructuredText Primer]]

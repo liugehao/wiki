@@ -1,0 +1,83 @@
+= postgresql一站式收费脚本 =
+----
+不考虑其它条件，粗略计算。plpythonu 存储过程。
+{{{#!highlight python
+-- Function: jisuan(date, integer)
+
+-- DROP FUNCTION jisuan(date, integer);
+
+CREATE OR REPLACE FUNCTION jisuan(dt date, pagesize integer)
+  RETURNS text AS
+$BODY$
+
+import pickle, datetime, math
+startdt = datetime.datetime.now()
+wd_citys = {}
+
+for row in plpy.execute('select g.bm,cc."CityID",g.sjdw as sjdw from gs g left join county cc on cc."CountyID" = g.szd::int'):
+    wd_citys[row['bm']] = (row['sjdw'], row['CityID'])
+
+je = {}
+plan = plpy.prepare("select szzl,szjg,xzzl,xzjg,shi1,shi2,category from jgsz  where category =1 and ssrq < $1 order by ssrq asc", ['date',])
+
+for row in plpy.execute(plan, [datetime.datetime.strptime(dt,'%Y-%m-%d'),]):
+    if je.has_key(row['shi1']):
+        if je[row['shi1']].has_key(row['shi2']):
+	    je[row['shi1']]['shi2'] = (row['szzl'], row['szjg'], row['xzzl'], row['xzjg'])
+        else:
+	    je[row['shi1']]['shi2'] = (row['szzl'], row['szjg'], row['xzzl'], row['xzjg'])
+    else:
+        je[row['shi1']] = {row['shi2']:(row['szzl'], row['szjg'], row['xzzl'], row['xzjg'])}
+
+plan = plpy.prepare("""  select t.docid1,coalesce(g1."GS",g2."GS",g3."GS",g4."GS",0) as gs from tb_scan_je t left join wdtmfw g1 on g1.qsh3 = t.docid3 and t.docid1 between g1.qsh1 and g1.zzh1 left join wdtmfw g2 on g2.zzh3 = t.docid3 and t.docid1 between g2.qsh1 and g2.zzh1 left join gstmfw g3 on g3.qsh2 = t.docid2 and t.docid1 between g3.qsh1 and g3.zzh1 left join gstmfw g4 on g4.zzh2 = t.docid2 and t.docid1 between g4.qsh1 and g4.zzh1 where t.dt = $1 limit $2 offset $3""", ['date','int','int'])
+plan1 = plpy.prepare("select scan_site::int as site,scan_type as lb,obj_wei as zl from tb_scan where doc_idint = $1 order by scan_time asc", ['bigint',])
+plan2 = plpy.prepare("""INSERT INTO je( doc_id, fjfb, fjcs, djfb, djcs, zl, je, dt)    VALUES ($1, $2, $3, $4, $5, $6, $7, $8);""", ['bigint','int','int','int','int','numeric(5,2)','numeric(5,2)','date'])
+plan3 = plpy.prepare("insert into log (doc_id,log) values ($1 ,$2)",['bigint','text'])
+plan4 = plpy.prepare("select count(1) as co from tb_scan_je where dt=$1",['date'])
+result = plpy.execute(plan4, [dt])
+result = result[0]['co']
+pages = int(math.ceil(float(result) / pagesize))
+for i in range(pages):
+    tmp1 = datetime.datetime.now() - startdt
+    plpy.info('第'+str(i)+'轮查询：%s' % tmp1.seconds)
+    for row in plpy.execute(plan, [dt, pagesize, pagesize * i]):
+        tmp = {'doc_id':row['docid1'], 'fjfb':row['gs'], 'fjcs':0, 'djfb':0, 'djcs':0, 'zl':0, 'je':0,'dt':dt}
+        try:
+            for srow in plpy.execute(plan1, [row['docid1'],]):
+                if srow['zl'] !='' and srow['zl'] > tmp['zl']:
+                    tmp['zl'] = srow['zl']
+                if srow['lb'] == '10' or srow['lb'] == '13':
+                    tmp['djfb'] = srow['site']
+                    break
+                if srow['lb'] in ('03', '17', '18', '44', '96', '97'):
+                    tmp['djfb'] = srow['site']
+            
+            if tmp['fjfb'] != 0 and wd_citys.has_key(tmp['fjfb']):
+                tmp['fjcs'] = wd_citys[tmp['fjfb']][1]
+            if tmp['djfb'] != 0 and wd_citys.has_key(tmp['djfb']):
+                tmp['djcs'] = wd_citys[tmp['djfb']][1]
+            if je.has_key(tmp['fjfb']):
+                if je[tmp['fjfb']].has_key(tmp['djcs']):
+                    tmp['je'] = (tmp['zl']-je[tmp['fjfb']][tmp['djcs']][0]) / je[tmp['fjfb']][tmp['djcs']][2] * je[tmp['fjfb']][tmp['djcs']][3] + je[tmp['fjfb']][tmp['djcs']][1]
+
+            if tmp['je'] == 0 and je.has_key(tmp['fjcs']):
+                if je[tmp['fjcs']].has_key(tmp['djcs']):
+                    tmp['je'] = (tmp['zl']-je[tmp['fjcs']][tmp['djcs']][0]) / je[tmp['fjcs']][tmp['djcs']][2] * je[tmp['fjcs']][tmp['djcs']][3] + je[tmp['fjcs']][tmp['djcs']][1]
+            try:
+                plpy.execute(plan2,[tmp['doc_id'], tmp['fjfb'], tmp['fjcs'], tmp['djfb'], tmp['djcs'], tmp['zl'], tmp['je'], dt])
+            except:
+                plpy.info(str(tmp)+str(row['docid1']))
+        except:
+            plpy.info(str(tmp)+str(row['docid1']))
+
+    plpy.execute(plan3 , [startdt.strftime("%Y%m%d")+str(i),i])
+proctime = datetime.datetime.now() - startdt
+plpy.execute("insert into log values(0,'%s')"% proctime.seconds)
+return str(proctime.seconds)
+    
+$BODY$
+  LANGUAGE plpythonu VOLATILE
+  COST 100;
+ALTER FUNCTION jisuan(date, integer)
+  OWNER TO postgres;
+}}}

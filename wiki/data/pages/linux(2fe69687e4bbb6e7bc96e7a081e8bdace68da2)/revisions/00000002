@@ -1,0 +1,33 @@
+= 文件编码转换 =
+
+{{{#!highlight bash
+find . -type f -name '*.js' -exec iconv --verbose -f GBK -t UTF-8 {} -o {}.result \; -exec mv {} {}.bak \; -exec mv {}.result {} \;
+
+find . -type f -name '*.php' -exec iconv --verbose -f GBK -t UTF-8 {} -o {}.result \; -exec mv {} {}.bak \; -exec mv {}.result {} \;
+
+find . -type f -name '*.html' -exec iconv --verbose -f GBK -t UTF-8 {} -o {}.result \; -exec mv {} {}.bak \; -exec mv {}.result {} \;
+
+find . -type f -name '*.css' -exec iconv --verbose -f GBK -t UTF-8 {} -o {}.result \; -exec mv {} {}.bak \; -exec mv {}.result {} \;
+
+find ./ -type f -name "*.php" |xargs  sed -i  's/charset=gb2312/charset=utf-8/ig'
+charset=gb2312"
+
+find ./ -name "*.bak"|xargs rm
+
+find ./ -type f -name "*.php" |xargs  sed -i  's/myxajaxResponse("gb2312/myxajaxResponse("utf-8/ig'
+
+find ./ -type f -name "*.php" |xargs sed -i  "s/iconv('gbk', 'utf-8' ,\(.*\?\))/\1/ig"
+find ./ -type f -name "*.php" |xargs sed -i  "s/iconv('gb2312','utf-8',\(.*\?\))/\1/ig"
+find ./ -type f -name "*.php" |xargs sed -i  "s/iconv('utf-8','gbk',\(.*\?\))/\1/ig"
+find ./ -type f -name "*.php" |xargs sed -i  "s/iconv('utf-8','gb2312',\(.*\?\))/\1/ig"
+
+
+find ./ -type f -name "*.php" |xargs sed -i  's/iconv("gbk", "utf-8", \(.*\?\))/\1/ig'
+
+
+grep -e 'utf-8' -r .
+
+sed -i '1d' urfile 删除第一行
+sed -i '$d' urfile 最后一行
+
+}}}

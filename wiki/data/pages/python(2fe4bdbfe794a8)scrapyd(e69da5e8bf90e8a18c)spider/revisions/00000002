@@ -1,0 +1,40 @@
+在这里详述 python/使用scrapyd来运行spider。
+
+----
+用scrapy写爬虫的时候都是通过crawl来执行，这样的运行方式是只执行一个爬虫，如果想同时运行多个爬虫可以考虑使用scrapyd的方式，也就是scrapy server。
+
+= 运行scrapyd: =
+ . {{{
+scrapy server
+}}}
+
+= 部署project: =
+ . 查看project的deploy列表 进入到project目录后执行下面的命令
+ {{{
+scrapy deploy -l
+}}}
+ 如果有返回类似下面的内容的说明配置正确
+ {{{
+scrapyd              http://localhost:6800/
+}}}
+ 如果没有显示就编辑project的scrapy.cfg里面的deploy
+ {{{
+[deploy]
+url = http://localhost:6800/
+project = pitayacd
+}}}
+ 打包并上传
+ {{{
+scrapy deploy default -p pitayacd
+}}}
+ 返回信息如下
+ {{{#!highlight json
+{"status": "ok", "project": "pitayacd", "version": "1348817612", "spiders": 1}
+}}}
+
+= 运行jobs =
+ . 部署完成后使用curl提交信息到scrapyd就可以运行指定的spiders了
+ {{{
+curl http://localhost:6800/schedule.json -d project=pitayacd -d spider=spider2
+}}}
+ 参考资料: http://doc.scrapy.org/en/0.14/topics/scrapyd.html

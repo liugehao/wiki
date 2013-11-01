@@ -1,0 +1,19 @@
+== 章节3 课时 48 讲解dhclient-nmap ==
+
+{{{
+抓包图形界面
+ethercal
+
+文本
+tcpdump
+
+nmap -sS -P0 -o 192.168.0.1
+nmap -sS -O -P0 192.168.0.254 -p 1-65535
+cat /etc/services  应用程序的默认端口说明
+cat /etc/protocols internet协议内容
+
+dhclient //dhcp 服务器指定
+
+dhclient -s 192.168.0.1 获取指定服务器指定的IP地址
+
+}}}
