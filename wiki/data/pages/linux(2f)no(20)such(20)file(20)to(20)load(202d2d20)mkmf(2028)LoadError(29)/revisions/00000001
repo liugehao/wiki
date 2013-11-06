@@ -1,0 +1,12 @@
+== Describe linux/no such file to load -- mkmf (LoadError) here. ==
+----
+/usr/bin/ruby1.8 extconf.rb
+extconf.rb:1:in `require': no such file to load -- mkmf (LoadError)
+ from extconf.rb:1
+
+sudo apt-get install build-essential libopenssl-ruby ruby1.8-dev
+
+
+
+debian 7:
+sudo apt-get install build-essential libopenssl-ruby ruby-dev

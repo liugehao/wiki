@@ -1,0 +1,6 @@
+== 在这里详述 php/php javascript rc4 base64 兼容 ==
+----
+
+php的处理方法默认按字节处理RC4，javascript默认是按UTF-8处理。
+javascript的base64为了和PHP兼容，也可更改字符集。
+附代码文件

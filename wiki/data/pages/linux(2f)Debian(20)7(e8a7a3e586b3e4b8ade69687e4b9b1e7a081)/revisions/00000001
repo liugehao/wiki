@@ -1,0 +1,28 @@
+== 在这里详述 linux/Debian 7解决中文乱码。 ==
+----DEBIAN下中文显示
+
+一.首先检查LOCALE情况
+
+说明：DEBIAN因为基于GNU所以，对不同地域进行了不同的包支持，以LOCALE形式存在。
+
+1.挂载ISO文件包，前8个ISO包就可以（这里不在讲述）。
+
+2.启动终端
+
+#apt-get install locales
+
+3.重新配置LOCALE
+
+#dpkg-reconfigure locales
+
+在所有的语言包选择en_US.ISO-8859-1和zh_CN.GBK。其他en_US和zh_CN打头的也选上。然后选择zh_CN.GBK为默认的LOCALE，则系统为中文界面（这里也可以选en_US.ISO，使系统为英文界面）。
+
+3.运行LOCALE命令检查当前的LOCALE环境
+
+#locale
+
+正确配置下会显式
+
+LANG =zh_CN.GBK
+
+........................以下显示略过
