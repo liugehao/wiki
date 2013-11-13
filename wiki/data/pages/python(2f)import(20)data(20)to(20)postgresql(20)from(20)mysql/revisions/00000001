@@ -1,0 +1,36 @@
+== 在这里详述 python/import data to postgresql from mysql。 ==
+----
+
+{{{#!highlight python
+
+#!/usr/bin/env python
+#coding=utf-8
+import MySQLdb, psycopg2
+import sys
+
+#psycopg2.paramstyle='qmark' #psycopg2.paramstyle 失效 ，全用%s
+pconn = psycopg2.connect(host='172.16.147.133', user='postgres', password='l', database='address')
+pc = pconn.cursor()
+
+def insert(row, table):
+    lens = len(row)
+    str = "insert into %s values (%s);" % (table, (', %s' * lens)[1:] )
+    try:
+        pc.execute(str, row)
+    except:
+        pass
+
+if __name__ == "__main__":
+    table = sys.argv[1]
+    mconn = MySQLdb.connect(charset = 'gbk', host="192.168.1.16", user='caiwu', passwd='cai_xxxx', db='exp_address')
+    mc = mconn.cursor()
+    mc.arraysize = 10000
+    mc.execute("select * from %s" % table)
+    while 1:
+        rows = mc.fetchmany()
+        if not len(row):
+            break
+        for row in rows:
+            insert(row, table)
+    pconn.commit()
+}}}
