@@ -1,0 +1,45 @@
+== 在这里详述 linux/hadoop x64 编译。==
+----
+
+{{{
+参考：http://blog.csdn.net/bamuta/article/details/13506893
+apt-get install autoconf automake libtool cmake
+apt-get install libncurses5-dev
+apt-get install libssl-dev
+
+安装maven
+下载，并解压
+http://maven.apache.org/download.cgi 
+[root@hadoop01 stable]# mvapache-maven-3.1.1 /usr/local/
+将/usr/local/apache-maven-3.1.1/bin加到环境变量中
+
+apt-get install libprotobuf-dev
+
+mvn package -Pdist,native -DskipTests -Dtar
+}}}
+
+ubuntu :
+http://blog.changecong.com/2013/10/ubuntu-%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-hadoop-2-2-0/
+{{{
+apt-get install g++ autoconf automake libtool cmake zlib1g-dev pkg-config libssl-dev
+下载最新的protobuf： https://code.google.com/p/protobuf/downloads/list
+解压，依次运行
+$ ./configure --prefix=/usr
+$ sudo make
+$ sudo make check
+$ sudo make install
+apt-get install maven
+最新的2.2.0 的Source Code 压缩包解压出来的code有个bug 需要patch后才能编译。否则编译hadoop-auth 会提示下面错误：
+https://issues.apache.org/jira/browse/HADOOP-10110
+patch -p0 < HADOOP-10110.patch 
+编译hadoop:
+mvn package -Pdist,native -DskipTests -Dtar
+}}}
+
+ 最新的2.2.0 的Source Code 压缩包解压出来的code有个bug 需要patch后才能编译。否则编译hadoop-auth 会提示下面错误：
+{{{
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:2.5.1:testCompile (default-testCompile) on project hadoop-auth: Compilation failure: Compilation failure:
+[ERROR] /home/chuan/trunk/hadoop-common-project/hadoop-auth/src/test/java/org/apache/hadoop/security/authentication/client/AuthenticatorTestCase.java:[84,13] cannot access org.mortbay.component.AbstractLifeCycle
+[ERROR] class file for org.mortbay.component.AbstractLifeCycle not found
+}}}
+Patch :https://issues.apache.org/jira/browse/HADOOP-10110
