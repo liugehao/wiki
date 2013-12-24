@@ -1,0 +1,31 @@
+== linux/solr 4.6 和tomcat 8的安装 ==
+----
+
+==== tomcat ====
+配置好jdk,解压tomcat,执行bin/startup.sh 启动
+
+==== solr安装 ====
+
+
+ 1. 将 dist 下的solr.war 放到tomcat的webapps下。
+ 1. 启动tomcat 此时报错，solr.war 解压 关闭tomcat 删除solr.war
+ 1. 得到solr 目录
+ 1. 配置solr_home  :将下载的solr包中解压的example/solr 文件夹copy到 /opt/solr(路径可以任意修改)。
+ 1. 修改tomcat/webapps/solr/WEB-INFO/web.xml
+   {{{
+    <env-entry>
+       <env-entry-name>solr/home</env-entry-name>
+       <env-entry-value>/opt/solr</env-entry-value>
+       <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
+   }}}
+   
+   或者/root/tomcat/conf/Catalina/localhost目录下建立solr文件
+   {{{
+    <?xml version="1.0" encoding="UTF-8"?>
+      <Context docBase="/root/tomcat/webapps/solr" > 
+      <Environment name="solr/home" type="java.lang.String" value="/opt/solr" override="true" />
+    </Context>
+   }}}
+ 1. copy 下载包中的 example\lib\ext 下的jar包全部放到tomcat根目录下 的lib目录下
+ 1. 启动tomcat

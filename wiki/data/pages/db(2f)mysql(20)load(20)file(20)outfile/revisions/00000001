@@ -1,0 +1,11 @@
+== 在这里详述 db/mysql load file outfile。 ==
+----
+{{{
+LOAD DATA INFILE 'data.txt' INTO TABLE tbl_name
+  FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+  LINES TERMINATED BY '\r\n'
+  IGNORE 1 LINES;
+
+
+select * from driver into outfile "a.txt" fields terminated by ',' enclosed by '"'; 
+}}}
