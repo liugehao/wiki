@@ -38,7 +38,7 @@ class LocalConfig(DefaultConfig):
     # Werkzeug run_simple arguments below here:
 
     # use '' for all interfaces or "1.2.3.4" for some specific IP
-    hostname = '0.0.0.0'
+    hostname = '127.0.0.1'
     # if you use port < 1024, you need to start as root
     port = 800
 
